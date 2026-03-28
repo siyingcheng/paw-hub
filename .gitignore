@@ -1,0 +1,395 @@
+# =============================================================================
+# Paw-Hub .gitignore
+# Covers Java + Spring Boot backend, React/Next.js frontend, and development tools
+# =============================================================================
+
+# =============================================================================
+# IDE and Editor
+# =============================================================================
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+*.swp
+*.swo
+*~
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+
+# Eclipse
+.metadata
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+.loadpath
+.recommenders
+
+# NetBeans
+nbproject/
+.nb-gradle/
+
+# Sublime Text
+*.sublime-project
+
+# Vim
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+[._]s[a-v][a-z]
+[._]sw[a-p]
+
+# =============================================================================
+# Java / Maven / Spring Boot
+# =============================================================================
+
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# Spring Boot
+/build/
+/.gradle
+/out/
+
+# Compiled classes
+*.class
+
+# JAR files
+*.jar
+*.war
+*.zip
+
+# Database drivers
+sql/
+
+# =============================================================================
+# Node.js / NPM / Yarn / PNPM
+# =============================================================================
+
+# Dependencies
+node_modules/
+npm-debug.log*
+npm-error.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+pnpm-error.log*
+lerna-debug.log*
+
+# Package manager lock files (optional - uncomment if you want to track them)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# Production build
+dist/
+build/
+.next/
+out/
+.nuxt
+.cache/
+.vuepress/dist
+.serverless/
+.fusebox/
+.dynamodb/
+.tern-port
+.cache-loader
+
+# =============================================================================
+# Environment Variables
+# =============================================================================
+
+.env
+.env.local
+.env.*.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Configuration
+application-local.properties
+application-local.yaml
+application-dev.properties
+application-dev.yaml
+
+# =============================================================================
+# Operating System
+# =============================================================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+*.swp
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+.directory
+
+# =============================================================================
+# Docker / Container
+# =============================================================================
+
+# Docker
+docker-compose.override.yml
+.dockerignore
+
+# Kubernetes
+k8s/local/
+kubeconfig
+
+# =============================================================================
+# Database
+# =============================================================================
+
+# PostgreSQL
+*.sql.bak
+*.sql.tmp
+
+# SQLite
+*.db
+*.sqlite
+*.sqlite3
+
+# H2
+h2.mv.db
+h2.trace.db
+
+# =============================================================================
+# Logs
+# =============================================================================
+
+logs/
+*.log
+**/logs/*
+!**/logs/.gitkeep
+
+# Tomcat
+catalina.out
+catalina.home/
+
+# Application logs
+spring.log
+app.log
+
+# =============================================================================
+# Test Coverage & Reports
+# =============================================================================
+
+coverage/
+.coverage
+.nyc_output/
+htmlcov/
+.pytest_cache/
+.hypothesis/
+junit-results/
+test-results/
+*.trx
+jacoco.exec
+.clover/
+clover.db
+clover.metrics.filtered
+mochawesome-report/
+
+# =============================================================================
+# Build Artifacts
+# =============================================================================
+
+/.bin/
+dist/
+.cache
+!.cache/.gitkeep
+
+# Generated documentation
+javadoc/
+docs/generated/
+
+# Frontend artifacts
+public/bundle.js
+public/bundle.js.map
+
+# =============================================================================
+# Temporary Files
+# =============================================================================
+
+*.tmp
+*.temp
+*.bak
+*.backup
+~*
+.~*
+*#
+\#*\#
+.\#*
+
+# =============================================================================
+# Archive Files (usually from uploads)
+# =============================================================================
+
+*.tar
+*.tar.gz
+*.rar
+*.7z
+
+# =============================================================================
+# OS / IDE Specific
+# =============================================================================
+
+# Finder
+.finder_info
+
+# Backup files
+*~
+*.swp
+
+# Temporary files
+.tmp
+tmp/
+
+# =============================================================================
+# Security - Keep secrets out of repo
+# =============================================================================
+
+# Private keys
+*.pem
+*.key
+*.crt
+*.cert
+
+# AWS
+.aws/
+.aws.credentials
+
+# SSH
+.ssh/
+
+# =============================================================================
+# IDE Module files (generated)
+# =============================================================================
+
+.idea/modules.xml
+.idea/vcs.xml
+.idea/encodings.xml
+
+# =============================================================================
+# CI/CD Specific
+# =============================================================================
+
+# GitHub Actions
+.github/workflows/temp/
+.github/workflows/*.bak
+
+# GitLab CI cache
+.gitlab-ci.cache/
+
+# =============================================================================
+# Misc
+# =============================================================================
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Temporary downloads
+downloads/
+uploads/
+
+# Backups
+*.backup
+*.old
+
+# Crash dumps
+dump.rdb
+
+# =============================================================================
+# Frontend Specific
+# =============================================================================
+
+# Next.js
+.next/
+out/
+.env.local
+.env.development
+.env.test
+.env.production
+
+# React
+node_modules/
+yarn.lock
+package-lock.json
+
+# Vite
+dist/
+.vite/
+
+# Storybook
+storybook-static/
+
+# =============================================================================
+# Backend Specific (Java)
+# =============================================================================
+
+# Spring Boot
+application.properties.bak
+application.properties.local
+application.yml.bak
+application.yml.local
+
+# Gradle (if used)
+.gradle/
+gradlew
+gradlew.bat
+gradle/
+
+# Ant (if used)
+build/
+dist/
+
+# =============================================================================
+# Documentation Generated Files
+# =============================================================================
+
+# Swagger/OpenAPI
+/target/classes/openapi.yaml
+/target/classes/openapi.json
+generated-api-docs/
+
+# =============================================================================
+# IntelliJ IDEA Specific
+# =============================================================================
+
+*.iml
+.idea/
+*.iws
+*.ipr
+.idea_modules/
+
+# =============================================================================
+# End of .gitignore
+# =============================================================================
