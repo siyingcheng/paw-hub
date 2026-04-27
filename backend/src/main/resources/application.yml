@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: paw-hub
+  datasource:
+    url: jdbc:h2:file:./data/pawhub;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.H2Dialect
+    open-in-view: false
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+server:
+  port: 8080
+
+app:
+  jwt:
+    secret: paw-hub-dev-secret-change-in-production-must-be-256-bits
+    expiration-ms: 86400000
+
+analysis:
+  flaky-threshold: 0.3
+  regression-sigma: 2.0
+  window-days: 30
+  consecutive-pass-count: 5
+
+logging:
+  level:
+    com.pawhub: DEBUG
