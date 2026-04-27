@@ -1,0 +1,38 @@
+package com.pawhub.module.triage.controller;
+
+import com.pawhub.common.dto.ApiResponse;
+import com.pawhub.module.triage.dto.TriageRequest;
+import com.pawhub.module.triage.dto.TriageResponse;
+import com.pawhub.module.triage.dto.TriageSummaryResponse;
+import com.pawhub.module.triage.service.TriageService;
+import jakarta.validation.Valid;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/v1/projects/{projectId}")
+public class TriageController {
+    private final TriageService triageService;
+
+    public TriageController(TriageService s) { this.triageService = s; }
+
+    @PutMapping("/test-executions/{executionId}/triage")
+    public ApiResponse<TriageResponse> saveTriage(@PathVariable Long projectId,
+            @PathVariable Long executionId, @Valid @RequestBody TriageRequest request,
+            Authentication auth) {
+        Long userId = (Long) auth.getPrincipal();
+        return ApiResponse.ok(triageService.saveOrUpdate(executionId, request, userId));
+    }
+
+    @GetMapping("/test-executions/{executionId}/triage")
+    public ApiResponse<TriageResponse> getTriage(@PathVariable Long projectId,
+            @PathVariable Long executionId) {
+        TriageResponse triage = triageService.getByExecutionId(executionId);
+        return ApiResponse.ok(triage);
+    }
+
+    @GetMapping("/triage-summary")
+    public ApiResponse<TriageSummaryResponse> getSummary(@PathVariable Long projectId) {
+        return ApiResponse.ok(triageService.getSummary(projectId));
+    }
+}
