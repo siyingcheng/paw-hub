@@ -39,6 +39,10 @@ export const api = {
       request<TestRun>(`/projects/${projectId}/test-results`, {
         method: 'POST', body: formData,
       }),
+    getRuns: (projectId: number, params?: string) =>
+      request<TestRun[]>(`/projects/${projectId}/test-runs${params ? '?' + params : ''}`),
+    getRun: (projectId: number, runId: number) =>
+      request<TestRun & { executions: TestExecution[] }>(`/projects/${projectId}/test-runs/${runId}`),
   },
 
   analysis: {
