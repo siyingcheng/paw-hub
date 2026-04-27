@@ -2,15 +2,25 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const links = [
-  { href: "", label: "Dashboard" },
-  { href: "/trends", label: "Trends" },
-  { href: "/settings", label: "Settings" },
-];
+interface Props {
+  projectId: number;
+  role?: string;
+}
 
-export default function Sidebar({ projectId }: { projectId: number }) {
+export default function Sidebar({ projectId, role }: Props) {
   const pathname = usePathname();
   const base = `/projects/${projectId}`;
+
+  const allLinks = [
+    { href: "", label: "Dashboard" },
+    { href: "/trends", label: "Trends" },
+  ];
+
+  const adminLinks = [
+    { href: "/settings", label: "Settings" },
+  ];
+
+  const links = role === 'ADMIN' ? [...allLinks, ...adminLinks] : allLinks;
 
   return (
     <aside className="w-56 min-h-[calc(100vh-56px)] bg-gray-900 border-r border-gray-800 p-4">
@@ -25,6 +35,13 @@ export default function Sidebar({ projectId }: { projectId: number }) {
           );
         })}
       </nav>
+      {role && (
+        <div className="mt-4 pt-3 border-t border-gray-800">
+          <span className={`text-xs px-2 py-1 rounded ${role === 'ADMIN' ? 'bg-purple-900 text-purple-400' : role === 'QA' ? 'bg-blue-900 text-blue-400' : 'bg-gray-800 text-gray-400'}`}>
+            {role}
+          </span>
+        </div>
+      )}
     </aside>
   );
 }

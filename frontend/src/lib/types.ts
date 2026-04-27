@@ -10,6 +10,19 @@ export interface AuthResponse {
   username: string;
 }
 
+export interface MembershipResponse {
+  userId: number;
+  teamId: number;
+  role: 'ADMIN' | 'QA' | 'VIEWER';
+}
+
+export interface MeResponse {
+  id: number;
+  username: string;
+  email: string;
+  memberships: MembershipResponse[];
+}
+
 export interface TestRun {
   id: number;
   projectId: number;

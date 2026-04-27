@@ -15,10 +15,15 @@ export default function DashboardPage() {
   const { projectId } = useParams<{ projectId: string }>();
   const id = Number(projectId);
   const toast = useToast();
+  const [role, setRole] = useState<string>("");
   const [trends, setTrends] = useState<TrendResponse[]>([]);
   const [flaky, setFlaky] = useState<FlakyTest[]>([]);
   const [triageSummary, setTriageSummary] = useState<TriageSummary | null>(null);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    api.auth.getRole(id).then(r => setRole(r.role)).catch(() => {});
+  }, [id]);
 
   useEffect(() => {
     setLoading(true);
@@ -39,7 +44,7 @@ export default function DashboardPage() {
     <div>
       <Navbar projectName="Project" />
       <div className="flex">
-        <Sidebar projectId={id} />
+        <Sidebar projectId={id} role={role} />
         <main className="flex-1 p-6 space-y-6">
           {loading ? (
             <div className="flex items-center justify-center h-64 text-gray-400">Loading dashboard...</div>

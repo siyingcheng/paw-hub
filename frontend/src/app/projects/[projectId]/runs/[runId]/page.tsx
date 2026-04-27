@@ -13,6 +13,7 @@ export default function TestExplorerPage() {
   const { projectId, runId } = useParams<{ projectId: string; runId: string }>();
   const id = Number(projectId);
   const toast = useToast();
+  const [role, setRole] = useState<string>("");
   const [run, setRun] = useState<TestRun | null>(null);
   const [executions, setExecutions] = useState<TestExecution[]>([]);
   const [search, setSearch] = useState("");
@@ -20,6 +21,10 @@ export default function TestExplorerPage() {
   const [envFilter, setEnvFilter] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    api.auth.getRole(id).then(r => setRole(r.role)).catch(() => {});
+  }, [id]);
 
   useEffect(() => {
     setLoading(true);
@@ -42,7 +47,7 @@ export default function TestExplorerPage() {
       <div>
         <Navbar projectName={`Run #${runId}`} />
         <div className="flex">
-          <Sidebar projectId={id} />
+          <Sidebar projectId={id} role={role} />
           <main className="flex-1 p-6">
             <div className="flex items-center justify-center h-64 text-gray-400">Loading test run...</div>
           </main>
@@ -55,7 +60,7 @@ export default function TestExplorerPage() {
     <div>
       <Navbar projectName={`Run #${runId}`} />
       <div className="flex">
-        <Sidebar projectId={id} />
+        <Sidebar projectId={id} role={role} />
         <main className="flex-1 p-6">
           {run && (
             <div className="flex gap-3 mb-4 text-sm">

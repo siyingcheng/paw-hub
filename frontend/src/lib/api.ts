@@ -2,6 +2,7 @@ import { getToken } from './auth';
 import type {
   TestRun, TestExecution, TrendResponse, FlakyTest,
   FailureClusterItem, TriageResponse, TriageSummary, SummaryResponse,
+  MeResponse,
 } from './types';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
@@ -32,6 +33,9 @@ export const api = {
       request<{token: string; userId: number; username: string}>('/auth/register', {
         method: 'POST', body: JSON.stringify({ username, email, password }),
       }),
+    me: () => request<MeResponse>('/auth/me'),
+    getRole: (projectId: number) =>
+      request<{ role: string }>(`/projects/${projectId}/my-role`),
   },
 
   collection: {
