@@ -39,4 +39,5 @@ public class TestRun {
     public TestStatus getStatus() { return status; } public void setStatus(TestStatus s) { this.status = s; }
     public String getRawXml() { return rawXml; } public void setRawXml(String s) { this.rawXml = s; }
     public Instant getCreatedAt() { return createdAt; }
+    public void setCreatedAt(Instant i) { this.createdAt = i; }
 }
