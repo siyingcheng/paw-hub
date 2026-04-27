@@ -1,0 +1,51 @@
+package com.pawhub.module.auth.service;
+
+import com.pawhub.common.exception.PawHubException;
+import com.pawhub.module.auth.entity.*;
+import com.pawhub.module.auth.repository.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class TenantService {
+    private final OrganizationRepository orgRepo;
+    private final TeamRepository teamRepo;
+    private final ProjectRepository projectRepo;
+    private final MembershipRepository membershipRepo;
+    private final UserRepository userRepo;
+
+    public TenantService(OrganizationRepository o, TeamRepository t, ProjectRepository p,
+                         MembershipRepository m, UserRepository u) {
+        this.orgRepo = o; this.teamRepo = t; this.projectRepo = p;
+        this.membershipRepo = m; this.userRepo = u;
+    }
+
+    public Organization createOrg(String name) { return orgRepo.save(new Organization(name)); }
+
+    public Team createTeam(Long orgId, String name) {
+        Organization org = orgRepo.findById(orgId)
+            .orElseThrow(() -> new PawHubException("Org not found", HttpStatus.NOT_FOUND));
+        return teamRepo.save(new Team(name, org));
+    }
+
+    @Transactional
+    public Project createProject(Long teamId, String name, Long userId) {
+        Team team = teamRepo.findById(teamId)
+            .orElseThrow(() -> new PawHubException("Team not found", HttpStatus.NOT_FOUND));
+        if (!membershipRepo.existsByUserIdAndTeamId(userId, teamId))
+            throw new PawHubException("Not a team member", HttpStatus.FORBIDDEN);
+        return projectRepo.save(new Project(name, team));
+    }
+
+    @Transactional
+    public Membership addMember(Long teamId, Long userId, MembershipRole role) {
+        if (membershipRepo.existsByUserIdAndTeamId(userId, teamId))
+            throw new PawHubException("Already a member", HttpStatus.CONFLICT);
+        User u = userRepo.findById(userId)
+            .orElseThrow(() -> new PawHubException("User not found", HttpStatus.NOT_FOUND));
+        Team t = teamRepo.findById(teamId)
+            .orElseThrow(() -> new PawHubException("Team not found", HttpStatus.NOT_FOUND));
+        return membershipRepo.save(new Membership(u, t, role));
+    }
+}
