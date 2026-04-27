@@ -1,3 +1,0 @@
--- Flyway migration: V1__initial_schema.sql
--- This file will be created during Story 2: Database Schema Setup
--- Placeholder for database initialization
