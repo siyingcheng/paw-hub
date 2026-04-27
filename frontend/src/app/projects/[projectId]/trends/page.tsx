@@ -1,0 +1,75 @@
+'use client';
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import Navbar from "@/components/layout/Navbar";
+import Sidebar from "@/components/layout/Sidebar";
+import PassRateChart from "@/components/dashboard/PassRateChart";
+import { api } from "@/lib/api";
+import { TrendResponse, FlakyTest, FailureClusterItem } from "@/lib/types";
+
+export default function TrendsPage() {
+  const { projectId } = useParams<{ projectId: string }>();
+  const id = Number(projectId);
+  const [trends, setTrends] = useState<TrendResponse[]>([]);
+  const [flaky, setFlaky] = useState<FlakyTest[]>([]);
+  const [clusters, setClusters] = useState<FailureClusterItem[]>([]);
+
+  useEffect(() => {
+    Promise.all([
+      api.analysis.getTrends(id),
+      api.analysis.getFlakyTests(id),
+      api.analysis.getClusters(id),
+    ]).then(([t, f, c]) => { setTrends(t); setFlaky(f); setClusters(c); });
+  }, [id]);
+
+  return (
+    <div>
+      <Navbar projectName="Trends" />
+      <div className="flex">
+        <Sidebar projectId={id} />
+        <main className="flex-1 p-6 space-y-6">
+          <PassRateChart trends={trends} />
+          <div className="grid grid-cols-2 gap-6">
+            <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
+              <h3 className="text-sm text-gray-400 mb-4">FLAKY TESTS</h3>
+              {flaky.length === 0 ? <p className="text-gray-500 text-sm">No flaky tests detected</p> : (
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="text-left text-gray-500 text-xs"><th className="py-2">Test</th><th className="py-2 text-right">Score</th><th className="py-2 text-right">Transitions</th></tr>
+                  </thead>
+                  <tbody>
+                    {flaky.map(f => (
+                      <tr key={f.testCaseKey} className="border-t border-gray-800">
+                        <td className="py-2 text-gray-300">{f.testCaseKey}</td>
+                        <td className="py-2 text-right text-yellow-400">{(f.flakyScore * 100).toFixed(0)}%</td>
+                        <td className="py-2 text-right text-gray-400">{f.transitionCount}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+            <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
+              <h3 className="text-sm text-gray-400 mb-4">FAILURE CLUSTERS</h3>
+              {clusters.length === 0 ? <p className="text-gray-500 text-sm">No clusters</p> : (
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="text-left text-gray-500 text-xs"><th className="py-2">Error</th><th className="py-2 text-right">Count</th></tr>
+                  </thead>
+                  <tbody>
+                    {clusters.map(c => (
+                      <tr key={c.clusterKey} className="border-t border-gray-800">
+                        <td className="py-2 text-gray-300 truncate max-w-[300px]">{c.representativeError}</td>
+                        <td className="py-2 text-right text-gray-400">{c.occurrenceCount}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+}
