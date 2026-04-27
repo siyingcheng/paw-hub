@@ -10,11 +10,16 @@ import java.time.LocalDate;
 @Component
 public class AnalysisListener {
     private final TrendAnalysisService trendService;
+    private final RegressionDetectionService regressionService;
     private final FlakyDetectionService flakyService;
     private final FailureClusteringService clusterService;
 
-    public AnalysisListener(TrendAnalysisService t, FlakyDetectionService f, FailureClusteringService c) {
-        this.trendService = t; this.flakyService = f; this.clusterService = c;
+    public AnalysisListener(TrendAnalysisService t, RegressionDetectionService r,
+                           FlakyDetectionService f, FailureClusteringService c) {
+        this.trendService = t;
+        this.regressionService = r;
+        this.flakyService = f;
+        this.clusterService = c;
     }
 
     @Async("analysisExecutor")
@@ -22,9 +27,12 @@ public class AnalysisListener {
     public void onTestResultCollected(TestResultCollectedEvent event) {
         String[] envs = {"dev", "staging", "prod"};
         LocalDate today = LocalDate.now();
+        LocalDate weekStart = today.minusDays(today.getDayOfWeek().getValue() - 1);
         for (String env : envs) {
             trendService.computeDailyTrend(event.projectId(), env, today);
+            trendService.computeWeeklyTrend(event.projectId(), env, weekStart);
         }
+        regressionService.detectAll(event.projectId());
         flakyService.detectFlakyTests(event.projectId());
         clusterService.clusterFailures(event.projectId());
     }

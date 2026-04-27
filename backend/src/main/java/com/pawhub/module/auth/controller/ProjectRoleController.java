@@ -30,5 +30,15 @@ public class ProjectRoleController {
         return ApiResponse.ok(new RoleResponse(role));
     }
 
+    @GetMapping
+    public ApiResponse<ProjectResponse> getProject(@PathVariable Long projectId) {
+        Project project = projectRepo.findById(projectId)
+            .orElseThrow(() -> new PawHubException("Project not found", HttpStatus.NOT_FOUND));
+        return ApiResponse.ok(new ProjectResponse(
+            project.getId(), project.getName(), project.getApiKey(),
+            project.getTeam().getName(), project.getTeam().getOrganization().getName()));
+    }
+
     public record RoleResponse(String role) {}
+    public record ProjectResponse(Long id, String name, String apiKey, String teamName, String orgName) {}
 }

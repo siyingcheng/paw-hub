@@ -4,6 +4,7 @@ import com.pawhub.common.dto.ApiResponse;
 import com.pawhub.module.analysis.dto.*;
 import com.pawhub.module.analysis.entity.TrendSnapshot;
 import com.pawhub.module.analysis.repository.*;
+import com.pawhub.module.analysis.service.RegressionDetectionService;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.*;
@@ -14,10 +15,12 @@ public class AnalysisController {
     private final TrendSnapshotRepository trendRepo;
     private final FlakyTestRecordRepository flakyRepo;
     private final FailureClusterRepository clusterRepo;
+    private final RegressionDetectionService regressionService;
 
     public AnalysisController(TrendSnapshotRepository t, FlakyTestRecordRepository f,
-                              FailureClusterRepository c) {
+                              FailureClusterRepository c, RegressionDetectionService r) {
         this.trendRepo = t; this.flakyRepo = f; this.clusterRepo = c;
+        this.regressionService = r;
     }
 
     @GetMapping("/trends")
@@ -25,7 +28,12 @@ public class AnalysisController {
             @RequestParam(defaultValue = "daily") String period,
             @RequestParam(defaultValue = "30") int days,
             @RequestParam(required = false) String environment) {
-        TrendSnapshot.PeriodType periodType = TrendSnapshot.PeriodType.valueOf(period.toUpperCase());
+        TrendSnapshot.PeriodType periodType;
+        try {
+            periodType = TrendSnapshot.PeriodType.valueOf(period.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return ApiResponse.error("Invalid period type. Use 'daily' or 'weekly'");
+        }
         LocalDate to = LocalDate.now();
         LocalDate from = to.minusDays(days);
         String[] envs = environment != null ? new String[]{environment} : new String[]{"dev","staging","prod"};
@@ -53,6 +61,18 @@ public class AnalysisController {
         var list = clusterRepo.findByProjectIdOrderByOccurrenceCountDesc(projectId)
             .stream().map(c -> new FailureClusterResponse(c.getClusterKey(), c.getRepresentativeError(),
                 c.getOccurrenceCount(), c.getFirstSeen(), c.getLastSeen())).toList();
+        return ApiResponse.ok(list);
+    }
+
+    @GetMapping("/regressions")
+    public ApiResponse<List<RegressionResponse>> getRegressions(@PathVariable Long projectId) {
+        var results = regressionService.detectAll(projectId);
+        var list = results.stream()
+            .filter(r -> r.runLevelRegression() || !r.regressedCases().isEmpty())
+            .map(r -> new RegressionResponse(
+                r.runLevelRegression(),
+                r.runLevelDetail(),
+                r.regressedCases())).toList();
         return ApiResponse.ok(list);
     }
 }

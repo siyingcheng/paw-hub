@@ -98,6 +98,12 @@ export interface TriageSummary {
   breakdown: Record<string, number>;
 }
 
+export interface RegressionResponse {
+  runLevelRegression: boolean;
+  runLevelDetail: string | null;
+  regressedCases: string[];
+}
+
 export interface SummaryResponse {
   totalRuns: number;
   overallPassRate: number;

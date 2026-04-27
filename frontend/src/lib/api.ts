@@ -2,7 +2,7 @@ import { getToken } from './auth';
 import type {
   TestRun, TestExecution, TrendResponse, FlakyTest,
   FailureClusterItem, TriageResponse, TriageSummary, SummaryResponse,
-  MeResponse,
+  MeResponse, RegressionResponse,
 } from './types';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
@@ -56,6 +56,8 @@ export const api = {
       request<FlakyTest[]>(`/projects/${projectId}/flaky-tests`),
     getClusters: (projectId: number) =>
       request<FailureClusterItem[]>(`/projects/${projectId}/failure-clusters`),
+    getRegressions: (projectId: number) =>
+      request<RegressionResponse[]>(`/projects/${projectId}/regressions`),
   },
 
   triage: {

@@ -13,6 +13,7 @@ export default function SettingsPage() {
   const toast = useToast();
   const [role, setRole] = useState<string>("");
   const [checked, setChecked] = useState(false);
+  const [projectInfo, setProjectInfo] = useState<{ name: string; apiKey: string; teamName: string; orgName: string } | null>(null);
 
   useEffect(() => {
     api.auth.getRole(id).then(r => {
@@ -23,6 +24,13 @@ export default function SettingsPage() {
         router.push(`/projects/${id}`);
       }
     }).catch(() => setChecked(true));
+
+    // Fetch project details
+    fetch(`http://localhost:8080/api/v1/projects/${id}`, {
+      headers: { Authorization: `Bearer ${localStorage.getItem('pawhub_token')}` }
+    }).then(r => r.json()).then(j => {
+      if (j.success) setProjectInfo(j.data);
+    }).catch(() => {});
   }, [id]);
 
   if (!checked || role !== 'ADMIN') {
@@ -49,6 +57,22 @@ export default function SettingsPage() {
             <h2 className="text-lg font-semibold mb-4">Project Settings</h2>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
+                <span className="text-gray-400">Project Name:</span>
+                <span className="ml-2">{projectInfo?.name || '—'}</span>
+              </div>
+              <div>
+                <span className="text-gray-400">Organization:</span>
+                <span className="ml-2">{projectInfo?.orgName || '—'}</span>
+              </div>
+              <div>
+                <span className="text-gray-400">Team:</span>
+                <span className="ml-2">{projectInfo?.teamName || '—'}</span>
+              </div>
+              <div>
+                <span className="text-gray-400">API Key:</span>
+                <code className="ml-2 text-xs bg-gray-800 px-2 py-1 rounded">{projectInfo?.apiKey || '—'}</code>
+              </div>
+              <div>
                 <span className="text-gray-400">Analysis Flaky Threshold:</span>
                 <span className="ml-2">0.3</span>
               </div>
@@ -60,6 +84,10 @@ export default function SettingsPage() {
                 <span className="text-gray-400">Analysis Window:</span>
                 <span className="ml-2">30 days</span>
               </div>
+            </div>
+            <div className="mt-4 p-3 bg-gray-800 rounded-lg text-xs">
+              <span className="text-gray-400">Upload endpoint: </span>
+              <code className="text-blue-400">POST /api/v1/projects/{id}/test-results</code>
             </div>
           </div>
           <div className="bg-gray-900 rounded-xl border border-gray-800 p-6">

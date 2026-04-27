@@ -38,4 +38,26 @@ public class TrendAnalysisService {
         snap.setRetryRate(0.0);
         trendRepo.save(snap);
     }
+
+    @Transactional
+    public void computeWeeklyTrend(Long projectId, String env, LocalDate weekStart) {
+        LocalDate weekEnd = weekStart.plusDays(7);
+        Instant from = weekStart.atStartOfDay().toInstant(ZoneOffset.UTC);
+        Instant to = weekEnd.atStartOfDay().toInstant(ZoneOffset.UTC);
+        List<TestRun> runs = testRunRepo.findByProjectIdAndEnvironmentAndCreatedAtBetween(projectId, env, from, to);
+        if (runs.isEmpty()) return;
+
+        TrendSnapshot snap = trendRepo
+            .findByProjectIdAndDateAndEnvironmentAndPeriodType(projectId, weekStart, env, TrendSnapshot.PeriodType.WEEKLY)
+            .orElseGet(TrendSnapshot::new);
+        snap.setProjectId(projectId);
+        snap.setDate(weekStart);
+        snap.setEnvironment(env);
+        snap.setPeriodType(TrendSnapshot.PeriodType.WEEKLY);
+        snap.setPassRate(runs.stream().mapToDouble(r -> r.getTotalCases() > 0 ? (double)r.getPassed()/r.getTotalCases() : 1.0).average().orElse(0));
+        snap.setFailureRate(runs.stream().mapToDouble(r -> r.getTotalCases() > 0 ? (double)r.getFailed()/r.getTotalCases() : 0.0).average().orElse(0));
+        snap.setAvgDurationMs(runs.stream().mapToDouble(TestRun::getDurationMs).average().orElse(0));
+        snap.setRetryRate(0.0);
+        trendRepo.save(snap);
+    }
 }

@@ -5,9 +5,10 @@ import com.pawhub.module.collection.dto.TestExecutionResponse;
 import com.pawhub.module.collection.dto.TestRunDetailResponse;
 import com.pawhub.module.collection.dto.TestRunResponse;
 import com.pawhub.module.collection.entity.TestRun;
+import com.pawhub.module.collection.repository.TestRunRepository;
 import com.pawhub.module.collection.service.CollectionService;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.nio.charset.StandardCharsets;
@@ -17,7 +18,10 @@ import java.util.List;
 @RequestMapping("/api/v1/projects/{projectId}")
 public class CollectionController {
     private final CollectionService service;
-    public CollectionController(CollectionService s) { this.service = s; }
+    private final TestRunRepository testRunRepo;
+    public CollectionController(CollectionService s, TestRunRepository tr) {
+        this.service = s; this.testRunRepo = tr;
+    }
 
     @PostMapping(value = "/test-results", consumes = "multipart/form-data")
     public ApiResponse<TestRunResponse> uploadFile(@PathVariable Long projectId,
@@ -49,8 +53,13 @@ public class CollectionController {
     }
 
     @GetMapping("/test-runs")
-    public ApiResponse<List<TestRunResponse>> getRuns(@PathVariable Long projectId) {
-        return ApiResponse.error("Not implemented — use specific run ID or add pagination");
+    public ApiResponse<List<TestRunResponse>> getRuns(@PathVariable Long projectId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        var pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        var runs = testRunRepo.findByProjectId(projectId, pageable)
+            .map(TestRunResponse::from).toList();
+        return ApiResponse.ok(runs);
     }
 
     @GetMapping("/test-runs/{runId}")
