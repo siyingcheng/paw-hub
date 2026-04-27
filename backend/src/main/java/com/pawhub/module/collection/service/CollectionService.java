@@ -73,4 +73,14 @@ public class CollectionService {
         events.publishEvent(new TestResultCollectedEvent(run.getId(), projectId));
         return run;
     }
+
+    public TestRun getRun(Long projectId, Long runId) {
+        return testRunRepo.findById(runId)
+            .filter(r -> r.getProject().getId().equals(projectId))
+            .orElseThrow(() -> new PawHubException("Test run not found", HttpStatus.NOT_FOUND));
+    }
+
+    public List<TestExecution> getExecutions(Long runId) {
+        return executionRepo.findByTestRunIdOrderByAttemptAsc(runId);
+    }
 }

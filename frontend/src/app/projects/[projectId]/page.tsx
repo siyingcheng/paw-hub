@@ -26,7 +26,7 @@ export default function DashboardPage() {
       setTrends(t);
       setFlaky(f);
       setTriageSummary(ts);
-    });
+    }).catch(err => console.error('Dashboard load error:', err));
   }, [id]);
 
   return (

@@ -22,7 +22,7 @@ export default function TestExplorerPage() {
     api.collection.getRun(id, Number(runId)).then((data: any) => {
       setRun(data);
       setExecutions(data.executions || []);
-    });
+    }).catch(err => console.error('Test explorer load error:', err));
   }, [id, runId, refreshKey]);
 
   const filtered = executions.filter(e => {
