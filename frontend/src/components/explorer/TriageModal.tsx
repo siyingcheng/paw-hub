@@ -1,6 +1,7 @@
 'use client';
 import { useState } from "react";
 import { api } from "@/lib/api";
+import { useToast } from "@/lib/toast";
 
 const STATUSES = ["UNTRIAGED","NEW_BUG","KNOWN_ISSUE","SCRIPT_ISSUE","DATA_ISSUE","ENV_ISSUE","CR","OTHER"];
 
@@ -14,6 +15,7 @@ interface Props {
 }
 
 export default function TriageModal({ projectId, executionId, currentStatus, currentIssueLink, currentComment, onSaved }: Props) {
+  const toast = useToast();
   const [open, setOpen] = useState(false);
   const [status, setStatus] = useState(currentStatus || "UNTRIAGED");
   const [issueLink, setIssueLink] = useState(currentIssueLink || "");
@@ -24,10 +26,14 @@ export default function TriageModal({ projectId, executionId, currentStatus, cur
     setSaving(true);
     try {
       await api.triage.save(projectId, executionId, { triageStatus: status, issueLink, comment });
+      toast.success("Triage saved successfully");
       onSaved();
       setOpen(false);
-    } catch (e) { /* ignore */ }
-    finally { setSaving(false); }
+    } catch (e) {
+      toast.error("Failed to save triage: " + (e instanceof Error ? e.message : "Unknown error"));
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -46,7 +52,9 @@ export default function TriageModal({ projectId, executionId, currentStatus, cur
             <textarea placeholder="Comment" value={comment} onChange={e => setComment(e.target.value)} className="w-full px-3 py-2 rounded-lg bg-gray-800 border border-gray-700 text-sm" rows={2} />
             <div className="flex gap-2 justify-end">
               <button onClick={() => setOpen(false)} className="px-4 py-2 rounded-lg bg-gray-800 text-sm">Cancel</button>
-              <button onClick={handleSave} disabled={saving} className="px-4 py-2 rounded-lg bg-purple-600 text-sm font-semibold">{saving ? 'Saving...' : 'Save'}</button>
+              <button onClick={handleSave} disabled={saving} className="px-4 py-2 rounded-lg bg-purple-600 text-sm font-semibold">
+                {saving ? 'Saving...' : 'Save'}
+              </button>
             </div>
           </div>
         </div>

@@ -8,16 +8,20 @@ import PassRateChart from "@/components/dashboard/PassRateChart";
 import RecentRegressions from "@/components/dashboard/RecentRegressions";
 import TriageBreakdown from "@/components/dashboard/TriageBreakdown";
 import { api } from "@/lib/api";
+import { useToast } from "@/lib/toast";
 import { TrendResponse, FlakyTest, TriageSummary } from "@/lib/types";
 
 export default function DashboardPage() {
   const { projectId } = useParams<{ projectId: string }>();
   const id = Number(projectId);
+  const toast = useToast();
   const [trends, setTrends] = useState<TrendResponse[]>([]);
   const [flaky, setFlaky] = useState<FlakyTest[]>([]);
   const [triageSummary, setTriageSummary] = useState<TriageSummary | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
     Promise.all([
       api.analysis.getTrends(id),
       api.analysis.getFlakyTests(id),
@@ -26,7 +30,9 @@ export default function DashboardPage() {
       setTrends(t);
       setFlaky(f);
       setTriageSummary(ts);
-    }).catch(err => console.error('Dashboard load error:', err));
+    }).catch(err => {
+      toast.error("Failed to load dashboard: " + (err instanceof Error ? err.message : "Unknown error"));
+    }).finally(() => setLoading(false));
   }, [id]);
 
   return (
@@ -35,12 +41,18 @@ export default function DashboardPage() {
       <div className="flex">
         <Sidebar projectId={id} />
         <main className="flex-1 p-6 space-y-6">
-          <KpiCards trends={trends} flakyCount={flaky.length} triageSummary={triageSummary} />
-          <div className="grid grid-cols-2 gap-6">
-            <PassRateChart trends={trends} />
-            <RecentRegressions projectId={id} />
-          </div>
-          <TriageBreakdown summary={triageSummary} />
+          {loading ? (
+            <div className="flex items-center justify-center h-64 text-gray-400">Loading dashboard...</div>
+          ) : (
+            <>
+              <KpiCards trends={trends} flakyCount={flaky.length} triageSummary={triageSummary} />
+              <div className="grid grid-cols-2 gap-6">
+                <PassRateChart trends={trends} />
+                <RecentRegressions projectId={id} />
+              </div>
+              <TriageBreakdown summary={triageSummary} />
+            </>
+          )}
         </main>
       </div>
     </div>

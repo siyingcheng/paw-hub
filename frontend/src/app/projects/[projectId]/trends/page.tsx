@@ -5,22 +5,44 @@ import Navbar from "@/components/layout/Navbar";
 import Sidebar from "@/components/layout/Sidebar";
 import PassRateChart from "@/components/dashboard/PassRateChart";
 import { api } from "@/lib/api";
+import { useToast } from "@/lib/toast";
 import { TrendResponse, FlakyTest, FailureClusterItem } from "@/lib/types";
 
 export default function TrendsPage() {
   const { projectId } = useParams<{ projectId: string }>();
   const id = Number(projectId);
+  const toast = useToast();
   const [trends, setTrends] = useState<TrendResponse[]>([]);
   const [flaky, setFlaky] = useState<FlakyTest[]>([]);
   const [clusters, setClusters] = useState<FailureClusterItem[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
     Promise.all([
       api.analysis.getTrends(id),
       api.analysis.getFlakyTests(id),
       api.analysis.getClusters(id),
-    ]).then(([t, f, c]) => { setTrends(t); setFlaky(f); setClusters(c); });
+    ]).then(([t, f, c]) => {
+      setTrends(t); setFlaky(f); setClusters(c);
+    }).catch(err => {
+      toast.error("Failed to load trends: " + (err instanceof Error ? err.message : "Unknown error"));
+    }).finally(() => setLoading(false));
   }, [id]);
+
+  if (loading) {
+    return (
+      <div>
+        <Navbar projectName="Trends" />
+        <div className="flex">
+          <Sidebar projectId={id} />
+          <main className="flex-1 p-6">
+            <div className="flex items-center justify-center h-64 text-gray-400">Loading trends...</div>
+          </main>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
