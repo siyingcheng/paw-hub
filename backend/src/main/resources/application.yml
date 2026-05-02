@@ -38,6 +38,9 @@ analysis:
   window-days: 30
   consecutive-pass-count: 5
 
+debug:
+  log-requests: true
+
 logging:
   level:
     com.pawhub: DEBUG

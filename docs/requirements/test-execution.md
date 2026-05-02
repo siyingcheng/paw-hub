@@ -65,3 +65,99 @@ Executions are returned as nested data within Test Run endpoints:
 
 - Bulk retry re-upload (re-running all failed cases in a run)
 - Execution-level environment (environment is on TestRun)
+
+---
+
+## Gherkin Scenarios
+
+### Data Integrity
+
+```gherkin
+Feature: Test Execution Data Integrity
+
+  Scenario: Create execution with valid data
+    Given a TestRun exists with id 1
+    When a TestExecution is created with suiteName "AuthTest", className "com.app.AuthTest",
+         testName "shouldLogin", status PASS, duration 1200ms
+    Then the execution is persisted with attempt = 1
+    And status is "PASS"
+    And error fields are null
+
+  Scenario: Duplicate execution is rejected
+    Given an execution exists for (run=1, suite="AuthTest", class="com.app.AuthTest", name="shouldLogin", attempt=1)
+    When another execution with the same key is inserted
+    Then a unique constraint violation occurs
+
+  Scenario: Execution with FAIL status stores error details
+    Given a TestRun exists with id 1
+    When a TestExecution is created with status FAIL, errorMessage "Expected 200 but got 500",
+         errorType "AssertionError", and stack trace
+    Then all error fields are persisted
+
+  Scenario: caseNumber is optional
+    Given a TestRun exists with id 1
+    When a TestExecution is created without a caseNumber
+    Then the execution is persisted with caseNumber = null
+```
+
+### Retry Handling
+
+```gherkin
+Feature: Retry Handling
+
+  Scenario: Multiple attempts for same test case
+    Given a TestRun exists with id 1
+    And an execution exists with (run=1, suite="ApiTest", class="com.app.ApiTest", name="searchUsers", attempt=1, status=FAIL)
+    When a retry execution is created with (run=1, suite="ApiTest", class="com.app.ApiTest", name="searchUsers", attempt=2, status=PASS)
+    Then both executions exist
+    And the final-attempt status for "searchUsers" is PASS
+
+  Scenario: Retry-pass pattern detected by flaky analysis
+    Given a test case has attempt=1 with FAIL and attempt=2 with PASS
+    When flaky analysis runs
+    Then the retry_pass_count for this test case is 1
+    And the flaky score is elevated
+
+  Scenario: All attempts contribute to total duration
+    Given a test case has attempt=1 with 500ms and attempt=2 with 300ms
+    Then the total cost for this test case is 800ms
+```
+
+### Frontend Display
+
+```gherkin
+Feature: Test Explorer Page
+
+  Scenario: View test run executions
+    Given I am on /projects/1/runs/42
+    When the page loads
+    Then I see a summary bar with passed, failed, skipped counts, duration, environment, and branch
+    And I see a table with all executions
+
+  Scenario: Filter executions by search
+    Given I am viewing run 42 with 100 executions
+    When I type "login" in the search input
+    Then only executions whose testName or className contains "login" are shown
+
+  Scenario: Filter executions by status
+    Given I am viewing run 42
+    When I select "FAIL" from the status dropdown
+    Then only executions with status FAIL or ERROR are shown
+
+  Scenario: Expand error detail on failed execution
+    Given I am viewing run 42 with a failed execution
+    When I click "Details" on the failed row
+    Then the error message, error type, and stack trace are displayed
+    And the content is in a scrollable code block
+
+  Scenario: Triage button on failed execution
+    Given I am viewing run 42 with a failed execution
+    When I click the "Triage" button
+    Then the TriageModal opens for that execution
+
+  Scenario: Status color coding
+    Given I am viewing run 42
+    Then PASS executions display a green badge
+    And FAIL/ERROR executions display a red badge
+    And SKIP executions display a yellow badge
+```
