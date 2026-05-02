@@ -1,5 +1,5 @@
 import { TrendResponse, TriageSummary } from "@/lib/types";
-import Card from "@/components/ui/Card";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface Props { trends: TrendResponse[]; flakyCount: number; triageSummary: TriageSummary | null; }
 

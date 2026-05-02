@@ -1,5 +1,5 @@
 import { TriageSummary } from "@/lib/types";
-import Card from "@/components/ui/Card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const CATEGORY_LABELS: Record<string, string> = {
   NEW_BUG: 'New Bug', KNOWN_ISSUE: 'Known Issue', SCRIPT_ISSUE: 'Script Issue',

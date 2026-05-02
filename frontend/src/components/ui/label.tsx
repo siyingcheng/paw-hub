@@ -1,3 +1,5 @@
+"use client"
+
 import { Field } from "@base-ui/react/field"
 
 import { cn } from "@/lib/utils"
