@@ -7,6 +7,7 @@ import com.pawhub.module.auth.repository.MembershipRepository;
 import com.pawhub.module.auth.repository.ProjectRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -31,8 +32,9 @@ public class ProjectRoleController {
     }
 
     @GetMapping
+    @Transactional(readOnly = true)
     public ApiResponse<ProjectResponse> getProject(@PathVariable Long projectId) {
-        Project project = projectRepo.findById(projectId)
+        var project = projectRepo.findByIdWithTeamAndOrg(projectId)
             .orElseThrow(() -> new PawHubException("Project not found", HttpStatus.NOT_FOUND));
         return ApiResponse.ok(new ProjectResponse(
             project.getId(), project.getName(), project.getApiKey(),

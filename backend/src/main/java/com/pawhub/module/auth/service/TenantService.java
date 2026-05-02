@@ -53,9 +53,10 @@ public class TenantService {
 
     // ── Role management ──
 
+    @Transactional(readOnly = true)
     public List<Membership> getMembers(Long teamId, Long actorId) {
         requireAdmin(teamId, actorId);
-        return membershipRepo.findByTeamId(teamId);
+        return membershipRepo.findByTeamIdWithUser(teamId);
     }
 
     @Transactional
@@ -68,7 +69,7 @@ public class TenantService {
             assertNotLastAdmin(teamId, userId);
         }
 
-        Membership m = membershipRepo.findByUserIdAndTeamId(userId, teamId)
+        Membership m = membershipRepo.findByUserIdAndTeamIdWithUser(userId, teamId)
             .orElseThrow(() -> new PawHubException("User is not a member of this team", HttpStatus.NOT_FOUND));
         m.setRole(role);
         return membershipRepo.save(m);
