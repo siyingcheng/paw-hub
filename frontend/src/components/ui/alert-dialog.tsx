@@ -4,6 +4,7 @@ import * as React from "react"
 import { AlertDialog as AlertDialogPrimitive } from "@base-ui/react/alert-dialog"
 
 import { cn } from "@/lib/utils"
+import { buttonVariants } from "@/components/ui/button"
 
 function AlertDialogRoot(props: React.ComponentProps<typeof AlertDialogPrimitive.Root>) {
   return <AlertDialogPrimitive.Root data-slot="alert-dialog-root" {...props} />
@@ -154,7 +155,7 @@ function AlertDialogAction({
 }: React.ComponentPropsWithoutRef<"button">) {
   return (
     <button
-      className={cn(className)}
+      className={cn(buttonVariants({ variant: "default" }), className)}
       {...props}
     />
   )
