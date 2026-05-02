@@ -79,13 +79,13 @@ export default function Sidebar({
         {navContent}
       </aside>
       <div className="md:hidden fixed top-3 left-3 z-40">
-        <Sheet>
-          <SheetTrigger asChild>
+        <Sheet side="left">
+          <SheetTrigger>
             <Button variant="outline" size="icon">
               <Menu className="h-5 w-5" />
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="w-56 p-0">
+          <SheetContent className="w-56 p-0">
             {navContent}
           </SheetContent>
         </Sheet>

@@ -6,8 +6,25 @@ import { ChevronDown, Check } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
-function SelectRoot(props: React.ComponentProps<typeof SelectPrimitive.Root>) {
-  return <SelectPrimitive.Root data-slot="select-root" {...props} />
+function SelectRoot({
+  value,
+  onValueChange,
+  ...props
+}: {
+  value?: string
+  onValueChange?: (value: string) => void
+} & Omit<
+  React.ComponentProps<typeof SelectPrimitive.Root>,
+  "value" | "onValueChange"
+>) {
+  return (
+    <SelectPrimitive.Root
+      data-slot="select-root"
+      value={value ?? null}
+      onValueChange={(val: unknown) => onValueChange?.(String(val ?? ""))}
+      {...props}
+    />
+  )
 }
 
 function SelectTrigger({

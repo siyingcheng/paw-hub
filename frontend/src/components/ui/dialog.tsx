@@ -112,6 +112,36 @@ function DialogDescription({
   )
 }
 
+function DialogHeader({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      className={cn(
+        "flex flex-col space-y-1.5 text-center sm:text-left",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function DialogFooter({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      className={cn(
+        "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
 export {
   DialogRoot,
   DialogTrigger,
@@ -121,6 +151,8 @@ export {
   DialogClose,
   DialogTitle,
   DialogDescription,
+  DialogHeader,
+  DialogFooter,
 }
 
 export const Dialog = DialogRoot

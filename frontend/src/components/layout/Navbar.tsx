@@ -79,7 +79,7 @@ export default function Navbar({
         </Link>
         {projectId && (
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+            <DropdownMenuTrigger>
               <Button variant="ghost" className="gap-1 text-muted-foreground">
                 / {currentName || `Project #${projectId}`}
                 <ChevronDown className="h-4 w-4" />
