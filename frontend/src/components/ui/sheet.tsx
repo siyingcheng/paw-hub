@@ -116,3 +116,5 @@ export {
   SheetTitle,
   SheetDescription,
 }
+
+export const Sheet = SheetRoot

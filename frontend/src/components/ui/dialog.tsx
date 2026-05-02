@@ -1,21 +1,21 @@
 "use client"
 
 import * as React from "react"
-import { Dialog } from "@base-ui/react/dialog"
+import { Dialog as DialogPrimitive } from "@base-ui/react/dialog"
 import { X } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
-function DialogRoot(props: React.ComponentProps<typeof Dialog.Root>) {
-  return <Dialog.Root data-slot="dialog-root" {...props} />
+function DialogRoot(props: React.ComponentProps<typeof DialogPrimitive.Root>) {
+  return <DialogPrimitive.Root data-slot="dialog-root" {...props} />
 }
 
 function DialogTrigger({
   className,
   ...props
-}: React.ComponentProps<typeof Dialog.Trigger>) {
+}: React.ComponentProps<typeof DialogPrimitive.Trigger>) {
   return (
-    <Dialog.Trigger
+    <DialogPrimitive.Trigger
       data-slot="dialog-trigger"
       className={cn(className)}
       {...props}
@@ -26,18 +26,18 @@ function DialogTrigger({
 function DialogPortal({
   className,
   ...props
-}: React.ComponentProps<typeof Dialog.Portal>) {
+}: React.ComponentProps<typeof DialogPrimitive.Portal>) {
   return (
-    <Dialog.Portal data-slot="dialog-portal" className={cn(className)} {...props} />
+    <DialogPrimitive.Portal data-slot="dialog-portal" className={cn(className)} {...props} />
   )
 }
 
 function DialogBackdrop({
   className,
   ...props
-}: React.ComponentProps<typeof Dialog.Backdrop>) {
+}: React.ComponentProps<typeof DialogPrimitive.Backdrop>) {
   return (
-    <Dialog.Backdrop
+    <DialogPrimitive.Backdrop
       data-slot="dialog-backdrop"
       className={cn(
         "data-[ending-style]:outline-none data-[starting-style]:opacity-0 data-[ending-style]:opacity-0 data-[starting-style]:outline-none fixed inset-0 z-50 bg-black/40",
@@ -51,11 +51,11 @@ function DialogBackdrop({
 function DialogPopup({
   className,
   ...props
-}: React.ComponentProps<typeof Dialog.Popup>) {
+}: React.ComponentProps<typeof DialogPrimitive.Popup>) {
   return (
-    <Dialog.Portal>
-      <Dialog.Backdrop />
-      <Dialog.Popup
+    <DialogPrimitive.Portal>
+      <DialogPrimitive.Backdrop />
+      <DialogPrimitive.Popup
         data-slot="dialog-popup"
         className={cn(
           "bg-background data-[ending-style]:outline-none data-[starting-style]:translate-x-0 data-[ending-style]:translate-x-0 data-[starting-style]:scale-95 data-[ending-style]:scale-95 data-[starting-style]:opacity-0 data-[ending-style]:opacity-0 fixed left-1/2 top-1/2 z-50 grid w-full max-w-lg -translate-x-1/2 -translate-y-1/2 gap-4 border p-6 shadow-lg duration-200 sm:rounded-xl",
@@ -63,16 +63,16 @@ function DialogPopup({
         )}
         {...props}
       />
-    </Dialog.Portal>
+    </DialogPrimitive.Portal>
   )
 }
 
 function DialogClose({
   className,
   ...props
-}: React.ComponentProps<typeof Dialog.Close>) {
+}: React.ComponentProps<typeof DialogPrimitive.Close>) {
   return (
-    <Dialog.Close
+    <DialogPrimitive.Close
       data-slot="dialog-close"
       className={cn(
         "data-[slot=dialog-close]:absolute data-[slot=dialog-close]:right-4 data-[slot=dialog-close]:top-4 data-[slot=dialog-close]:rounded-xs data-[slot=dialog-close]:opacity-70 data-[slot=dialog-close]:ring-offset-background data-[slot=dialog-close]:transition-opacity hover:data-[slot=dialog-close]:opacity-100 focus:data-[slot=dialog-close]:outline-none focus:data-[slot=dialog-close]:ring-2 focus:data-[slot=dialog-close]:ring-ring focus:data-[slot=dialog-close]:ring-offset-2 disabled:data-[slot=dialog-close]:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
@@ -82,16 +82,16 @@ function DialogClose({
     >
       <X />
       <span className="sr-only">Close</span>
-    </Dialog.Close>
+    </DialogPrimitive.Close>
   )
 }
 
 function DialogTitle({
   className,
   ...props
-}: React.ComponentProps<typeof Dialog.Title>) {
+}: React.ComponentProps<typeof DialogPrimitive.Title>) {
   return (
-    <Dialog.Title
+    <DialogPrimitive.Title
       data-slot="dialog-title"
       className={cn("text-lg font-semibold leading-none tracking-tight", className)}
       {...props}
@@ -102,9 +102,9 @@ function DialogTitle({
 function DialogDescription({
   className,
   ...props
-}: React.ComponentProps<typeof Dialog.Description>) {
+}: React.ComponentProps<typeof DialogPrimitive.Description>) {
   return (
-    <Dialog.Description
+    <DialogPrimitive.Description
       data-slot="dialog-description"
       className={cn("text-muted-foreground text-sm", className)}
       {...props}
@@ -122,3 +122,6 @@ export {
   DialogTitle,
   DialogDescription,
 }
+
+export const Dialog = DialogRoot
+export const DialogContent = DialogPopup
