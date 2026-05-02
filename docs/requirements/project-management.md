@@ -58,9 +58,76 @@ Project
 - [ ] `addMember(teamId, userId, role)` → Membership created
 - [ ] `addMember` fails if already a member → 409
 
+### Role Management
+
+- [ ] `GET /projects/{id}/team/members` returns all members of the project's team
+- [ ] Only ADMIN of the team can view, change, or remove member roles
+- [ ] `PUT /projects/{id}/team/members/{userId}` upserts a member's role
+- [ ] ADMIN cannot change their own role → 400
+- [ ] ADMIN cannot demote or remove the last ADMIN of the team → 400
+- [ ] `DELETE /projects/{id}/team/members/{userId}` removes member from team
+- [ ] Role options: ADMIN, QA, VIEWER
+- [ ] Frontend Settings page shows real team members with role dropdown and remove button
+
 ---
 
 ## Gherkin Scenarios
+
+### Role Management
+
+```gherkin
+Feature: Team Member Role Management
+
+  Scenario: ADMIN lists team members
+    Given I am authenticated as an ADMIN of the team owning project 1
+    When I GET /api/v1/projects/1/team/members
+    Then the response status is 200
+    And the response is a list of members with userId, username, email, and role
+
+  Scenario: Non-ADMIN cannot list team members
+    Given I am authenticated as a QA of the team owning project 1
+    When I GET /api/v1/projects/1/team/members
+    Then the response status is 403
+
+  Scenario: ADMIN changes a member's role
+    Given user "bob" is a QA in the team
+    When I PUT /api/v1/projects/1/team/members/{bobUserId} with {"role": "ADMIN"}
+    Then the response status is 200
+    And "bob" now has role "ADMIN"
+
+  Scenario: ADMIN cannot change their own role
+    When I PUT /api/v1/projects/1/team/members/{myUserId} with {"role": "QA"}
+    Then the response status is 400
+    And the message is "Cannot change your own role"
+
+  Scenario: ADMIN cannot demote the last admin
+    Given I am the only ADMIN in the team
+    When I PUT /api/v1/projects/1/team/members/{myUserId} with {"role": "VIEWER"}
+    Then the response status is 400 (self-change blocked first)
+    # If another admin attempted to demote me:
+    Then the response would be 400 with "Cannot remove the last admin of the team"
+
+  Scenario: ADMIN removes a member from the team
+    Given user "carol" is a VIEWER in the team
+    When I DELETE /api/v1/projects/1/team/members/{carolUserId}
+    Then the response status is 200
+    And "carol" is no longer a team member
+
+  Scenario: ADMIN cannot remove themselves
+    When I DELETE /api/v1/projects/1/team/members/{myUserId}
+    Then the response status is 400
+    And the message is "Cannot remove yourself from the team"
+
+  Scenario: Non-member user returns 404 on role change
+    Given user "stranger" is not a member of the team
+    When I PUT /api/v1/projects/1/team/members/{strangerUserId} with {"role": "QA"}
+    Then the response status is 404
+    And the message is "User is not a member of this team"
+
+  Scenario: Invalid role value returns 400
+    When I PUT /api/v1/projects/1/team/members/{bobUserId} with {"role": "SUPERUSER"}
+    Then the response status is 400
+```
 
 ### Project Info
 

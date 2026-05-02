@@ -29,7 +29,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/v1/auth/**", "/actuator/health", "/h2-console/**").permitAll()
+                .requestMatchers("/api/v1/auth/login", "/api/v1/auth/register", "/actuator/health", "/h2-console/**").permitAll()
                 .requestMatchers("/api/v1/projects/*/test-results").permitAll()
                 .anyRequest().authenticated())
             .headers(h -> h.frameOptions(fo -> fo.sameOrigin()))

@@ -44,39 +44,39 @@ Membership
 
 ### Registration
 
-- [ ] Register with unique username and valid email → 200, token returned `{ token, userId, username }`
-- [ ] Register with duplicate username → 409, "Username already taken"
-- [ ] Register with missing/invalid email → 400
-- [ ] Password is BCrypt-hashed before storage (never plaintext)
+- [x] Register with unique username and valid email → 200, token returned `{ token, userId, username }`
+- [x] Register with duplicate username → 409, "Username already taken"
+- [x] Register with missing/invalid email → 400
+- [x] Password is BCrypt-hashed before storage (never plaintext)
 
 ### Login
 
-- [ ] Login with correct credentials → 200, JWT token returned
-- [ ] Login with wrong password → 401, "Invalid credentials"
-- [ ] Login with non-existent username → 401, "Invalid credentials"
-- [ ] Token contains: userId (sub), username (claim), issuedAt, expiration
-- [ ] Token expires after configured duration (default: 24h)
+- [x] Login with correct credentials → 200, JWT token returned
+- [x] Login with wrong password → 401, "Invalid credentials"
+- [x] Login with non-existent username → 401, "Invalid credentials"
+- [x] Token contains: userId (sub), username (claim), issuedAt, expiration
+- [x] Token expires after configured duration (default: 24h)
 
 ### Auth Filter
 
-- [ ] Requests without Authorization header → continue without auth (handled by security config)
-- [ ] Requests with `Bearer <valid_token>` → userId set in SecurityContext
-- [ ] Requests with `Bearer <invalid_token>` → continue without auth (no crash)
+- [x] Requests without Authorization header → continue without auth (handled by security config)
+- [x] Requests with `Bearer <valid_token>` → userId set in SecurityContext
+- [x] Requests with `Bearer <invalid_token>` → continue without auth (no crash)
 - [ ] Requests with `Bearer <expired_token>` → continue without auth
 
 ### Current User
 
-- [ ] `GET /auth/me` returns user id, username, email, and all memberships with roles
-- [ ] Unauthenticated request → 401/403
+- [x] `GET /auth/me` returns user id, username, email, and all memberships with roles
+- [x] Unauthenticated request → 401/403
 
 ### Role-Based Access (Frontend)
 
-- [ ] ADMIN sees Sidebar with: Dashboard, Trends, Settings
-- [ ] QA sees Sidebar with: Dashboard, Trends (no Settings)
-- [ ] VIEWER sees Sidebar with: Dashboard, Trends (no Settings)
-- [ ] Settings page redirects non-ADMIN to dashboard with error toast
-- [ ] Role badge shown in sidebar footer (ADMIN/QA/VIEWER)
-- [ ] User registers → has no team membership (must be added by admin)
+- [x] ADMIN sees Sidebar with: Dashboard, Trends, Settings
+- [x] QA sees Sidebar with: Dashboard, Trends (no Settings)
+- [x] VIEWER sees Sidebar with: Dashboard, Trends (no Settings)
+- [x] Settings page redirects non-ADMIN to dashboard with error toast
+- [x] Role badge shown in sidebar footer (ADMIN/QA/VIEWER)
+- [x] User registers → has no team membership (must be added by admin)
 
 ---
 

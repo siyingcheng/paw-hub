@@ -2,7 +2,7 @@ import { getToken } from './auth';
 import type {
   TestRun, TestExecution, TrendResponse, FlakyTest,
   FailureClusterItem, TriageResponse, TriageSummary, SummaryResponse,
-  MeResponse, RegressionResponse,
+  MeResponse, RegressionResponse, TeamMember, ProjectInfo,
 } from './types';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
@@ -24,6 +24,11 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
 }
 
 export const api = {
+  project: {
+    get: (projectId: number) =>
+      request<ProjectInfo>(`/projects/${projectId}`),
+  },
+
   auth: {
     login: (username: string, password: string) =>
       request<{token: string; userId: number; username: string}>('/auth/login', {
@@ -76,5 +81,18 @@ export const api = {
       request<SummaryResponse>(`/projects/${projectId}/summary?days=${days}`),
     export: (projectId: number, format = 'json', days = 30) =>
       request<string>(`/projects/${projectId}/export?format=${format}&days=${days}`),
+  },
+
+  team: {
+    listMembers: (projectId: number) =>
+      request<TeamMember[]>(`/projects/${projectId}/team/members`),
+    upsertRole: (projectId: number, userId: number, role: string) =>
+      request<TeamMember>(`/projects/${projectId}/team/members/${userId}`, {
+        method: 'PUT', body: JSON.stringify({ role }),
+      }),
+    removeMember: (projectId: number, userId: number) =>
+      request<void>(`/projects/${projectId}/team/members/${userId}`, {
+        method: 'DELETE',
+      }),
   },
 };

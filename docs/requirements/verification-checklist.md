@@ -13,63 +13,63 @@ Foundation. Users, authentication, JWT tokens, and role-based access. Nothing el
 
 ### Registration
 
-- [ ] Register with unique username and valid email → 200, token returned `{ token, userId, username }`
-- [ ] Register with duplicate username → 409, "Username already taken"
-- [ ] Register with missing/invalid email → 400
-- [ ] Password is BCrypt-hashed before storage (never plaintext)
+- [x] Register with unique username and valid email → 200, token returned `{ token, userId, username }`
+- [x] Register with duplicate username → 409, "Username already taken"
+- [x] Register with missing/invalid email → 400
+- [x] Password is BCrypt-hashed before storage (never plaintext)
 
 ### Login
 
-- [ ] Login with correct credentials → 200, JWT token returned
-- [ ] Login with wrong password → 401, "Invalid credentials"
-- [ ] Login with non-existent username → 401, "Invalid credentials"
-- [ ] Token contains: userId (sub), username (claim), issuedAt, expiration
-- [ ] Token expires after configured duration (default: 24h)
+- [x] Login with correct credentials → 200, JWT token returned
+- [x] Login with wrong password → 401, "Invalid credentials"
+- [x] Login with non-existent username → 401, "Invalid credentials"
+- [x] Token contains: userId (sub), username (claim), issuedAt, expiration
+- [x] Token expires after configured duration (default: 24h)
 
 ### Auth Filter
 
-- [ ] Requests without Authorization header → continue without auth (handled by security config)
-- [ ] Requests with `Bearer <valid_token>` → userId set in SecurityContext
-- [ ] Requests with `Bearer <invalid_token>` → continue without auth (no crash)
-- [ ] Requests with `Bearer <expired_token>` → continue without auth
+- [x] Requests without Authorization header → continue without auth (handled by security config)
+- [x] Requests with `Bearer <valid_token>` → userId set in SecurityContext
+- [x] Requests with `Bearer <invalid_token>` → continue without auth (no crash)
+- [x] Requests with `Bearer <expired_token>` → continue without auth
 
 ### Current User
 
-- [ ] `GET /auth/me` returns user id, username, email, and all memberships with roles
-- [ ] Unauthenticated request → 401/403
+- [x] `GET /auth/me` returns user id, username, email, and all memberships with roles
+- [x] Unauthenticated request → 401/403
 
 ### Frontend: Login page (`/login`)
 
-- [ ] Username and password inputs
-- [ ] Submit calls `POST /auth/login`
-- [ ] Success: JWT stored, redirect to `/projects/1`
-- [ ] Success: green toast "Welcome, {username}"
-- [ ] Failure: red toast with error message
-- [ ] Button shows "Logging in..." while loading, disabled
-- [ ] Link to Register page
+- [x] Username and password inputs
+- [x] Submit calls `POST /auth/login`
+- [x] Success: JWT stored, redirect to `/projects/1`
+- [x] Success: green toast "Welcome, {username}"
+- [x] Failure: red toast with error message
+- [x] Button shows "Logging in..." while loading, disabled
+- [x] Link to Register page
 
 ### Frontend: Register page (`/register`)
 
-- [ ] Username, email, password inputs
-- [ ] Submit calls `POST /auth/register`
-- [ ] Success: green toast, redirect to `/login`
-- [ ] Failure: red toast with error message
-- [ ] Button shows "Registering..." while loading, disabled
-- [ ] Link to Login page
+- [x] Username, email, password inputs
+- [x] Submit calls `POST /auth/register`
+- [x] Success: green toast, redirect to `/login`
+- [x] Failure: red toast with error message
+- [x] Button shows "Registering..." while loading, disabled
+- [x] Link to Login page
 
 ### Frontend: Navbar
 
-- [ ] "Paw-Hub" branding + project name
-- [ ] Logout button (clears JWT, redirects to /login)
+- [x] "Paw-Hub" branding + project name
+- [x] Logout button (clears JWT, redirects to /login)
 
 ### Frontend: Role-based sidebar & access
 
-- [ ] ADMIN sees Sidebar with: Dashboard, Trends, Settings
-- [ ] QA sees Sidebar with: Dashboard, Trends (no Settings)
-- [ ] VIEWER sees Sidebar with: Dashboard, Trends (no Settings)
-- [ ] Settings page redirects non-ADMIN to dashboard with error toast
-- [ ] Role badge shown in sidebar footer (ADMIN/QA/VIEWER)
-- [ ] User registers → has no team membership (must be added by admin)
+- [x] ADMIN sees Sidebar with: Dashboard, Trends, Settings
+- [x] QA sees Sidebar with: Dashboard, Trends (no Settings)
+- [x] VIEWER sees Sidebar with: Dashboard, Trends (no Settings)
+- [x] Settings page redirects non-ADMIN to dashboard with error toast
+- [x] Role badge shown in sidebar footer (ADMIN/QA/VIEWER)
+- [x] User registers → has no team membership (must be added by admin)
 
 ---
 
@@ -100,6 +100,18 @@ Organization → Team → Project hierarchy. Projects are the container for all 
 - [ ] `createProject` fails if user is not team member → 403
 - [ ] `addMember(teamId, userId, role)` → Membership created
 - [ ] `addMember` fails if already a member → 409
+
+### Role Management
+
+- [ ] `GET /projects/{id}/team/members` returns all members of the project's team
+- [ ] Only ADMIN of the team can view, change, or remove member roles (else 403)
+- [ ] `PUT /projects/{id}/team/members/{userId}` upserts a member's role
+- [ ] ADMIN cannot change their own role → 400
+- [ ] ADMIN cannot demote or remove the last ADMIN of the team → 400
+- [ ] `DELETE /projects/{id}/team/members/{userId}` removes member from team
+- [ ] Frontend Settings page: real team members list with role dropdown and remove button
+- [ ] Frontend: confirm dialog before removing a member
+- [ ] Frontend: success/error toasts on role change and removal
 
 ---
 
@@ -390,7 +402,7 @@ Cross-cutting UI: shared components, API client, toast system, and the Dashboard
 | # | Feature Area | Priority | Backend | Frontend | Total |
 |---|-------------|----------|---------|----------|-------|
 | 1 | User Management | P1 | 14 | 18 | 32 |
-| 2 | Project Management | P1 | 12 | 0 | 12 |
+| 2 | Project Management | P1 | 12 | 9 | 21 |
 | 3 | Test Run | P0 | 21 | 0 | 21 |
 | 4 | Test Execution | P0 | 9 | 8 | 17 |
 | 5 | Analysis Engine | P0 | 30 | 6 | 36 |
@@ -421,8 +433,8 @@ These are requirements that are specified but not implemented, or bugs that caus
 | 8 | Analysis | `retryRate` in TrendSnapshot | Hardcoded to 0.0, never computed | Medium |
 | 9 | Analysis | `FailureCluster.clusterKey` unique globally | Not scoped to projectId — cross-project collisions cause 500 | Medium |
 | 10 | User Mgmt | `GET /auth/me` with deleted user | `orElseThrow()` with no arg → `NoSuchElementException` → 500 | Medium |
-| 11 | Frontend | Settings page fetches project | Uses raw `fetch()` with hardcoded localhost instead of `api` client | Medium |
-| 12 | Frontend | Settings page team members | Hardcoded "Alice ADMIN, Bob QA, Carol VIEWER" instead of API call | Medium |
+| 11 | Frontend | Settings page fetches project | ~~Used raw fetch()~~ Fixed — now uses `api.project.get()` | Resolved |
+| 12 | Frontend | Settings page team members | ~~Hardcoded~~ Fixed — now fetches real members via API with role dropdown | Resolved |
 | 13 | Frontend | Dashboard project name | Hardcoded to "Project" instead of fetching from API | Low |
 | 14 | Frontend | Login redirect | Hardcoded to `/projects/1`, wrong for users not in project 1 | Low |
 
@@ -433,7 +445,7 @@ These are requirements that are specified but not implemented, or bugs that caus
 | 1 | User Mgmt | No `existsByEmail` check before registration |
 | 2 | User Mgmt | No 401 handling in frontend API client (expired token → cryptic error) |
 | 3 | User Mgmt | No route protection middleware (unauthenticated users can access any page) |
-| 4 | Project Mgmt | No REST endpoints for TenantService CRUD (createOrg, createTeam, etc.) |
+| 4 | Project Mgmt | No REST endpoints for org/team/project creation (out of scope for v1, role management added) |
 | 5 | Test Run | No `<testsuites>` wrapper support in XML parser |
 | 6 | Test Run | No duplicate upload detection (re-upload → 500 from unique constraint) |
 | 7 | Test Exec | No `@Min(1)` validation on attempt field |

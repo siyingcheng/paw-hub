@@ -104,6 +104,21 @@ export interface RegressionResponse {
   regressedCases: string[];
 }
 
+export interface ProjectInfo {
+  id: number;
+  name: string;
+  apiKey: string;
+  teamName: string;
+  orgName: string;
+}
+
+export interface TeamMember {
+  userId: number;
+  username: string;
+  email: string;
+  role: 'ADMIN' | 'QA' | 'VIEWER';
+}
+
 export interface SummaryResponse {
   totalRuns: number;
   overallPassRate: number;
