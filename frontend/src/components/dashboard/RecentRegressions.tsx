@@ -1,45 +1,74 @@
-'use client';
-import { useEffect, useState } from "react";
-import { api } from "@/lib/api";
-import { RegressionResponse } from "@/lib/types";
+"use client"
 
-interface Props { projectId: number }
+import { useEffect, useState } from "react"
+import { api } from "@/lib/api"
+import { RegressionResponse } from "@/lib/types"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Badge } from "@/components/ui/badge"
+import { AlertTriangle, Diamond } from "lucide-react"
+
+interface Props {
+  projectId: number
+}
 
 export default function RecentRegressions({ projectId }: Props) {
-  const [regressions, setRegressions] = useState<RegressionResponse[]>([]);
+  const [regressions, setRegressions] = useState<RegressionResponse[]>([])
 
   useEffect(() => {
-    api.analysis.getRegressions(projectId).then(r => setRegressions(r));
-  }, [projectId]);
+    api.analysis.getRegressions(projectId).then(r => setRegressions(r))
+  }, [projectId])
 
-  const allCases = regressions.flatMap(r => r.regressedCases);
-  const hasData = regressions.some(r => r.runLevelRegression) || allCases.length > 0;
+  const allCases = regressions.flatMap(r => r.regressedCases)
+  const hasData =
+    regressions.some(r => r.runLevelRegression) || allCases.length > 0
 
   return (
-    <div className="bg-gray-900 rounded-xl border border-gray-800 p-4">
-      <h3 className="text-sm text-gray-400 mb-4">RECENT REGRESSIONS</h3>
-      {!hasData ? (
-        <p className="text-gray-500 text-sm">No regressions detected</p>
-      ) : (
-        <div className="space-y-3">
-          {regressions.filter(r => r.runLevelRegression).map((r, i) => (
-            <div key={`run-${i}`} className="flex items-start gap-2 p-2 bg-red-950/50 rounded-lg">
-              <span className="text-red-400 mt-0.5">⚠</span>
-              <div>
-                <div className="text-red-300 text-sm font-medium">Run-level regression</div>
-                {r.runLevelDetail && <div className="text-red-400/70 text-xs">{r.runLevelDetail}</div>}
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-sm text-muted-foreground">
+          RECENT REGRESSIONS
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        {!hasData ? (
+          <p className="text-muted-foreground text-sm">
+            No regressions detected
+          </p>
+        ) : (
+          <div className="space-y-3">
+            {regressions
+              .filter(r => r.runLevelRegression)
+              .map((r, i) => (
+                <Alert key={`run-${i}`} variant="destructive">
+                  <AlertTriangle className="h-4 w-4" />
+                  <AlertDescription>
+                    <div className="font-medium text-sm">
+                      Run-level regression
+                    </div>
+                    {r.runLevelDetail && (
+                      <div className="text-xs opacity-80 mt-0.5">
+                        {r.runLevelDetail}
+                      </div>
+                    )}
+                  </AlertDescription>
+                </Alert>
+              ))}
+            {allCases.slice(0, 5).map((c, i) => (
+              <div
+                key={`case-${i}`}
+                className="flex items-center gap-2 text-sm"
+              >
+                <Diamond className="h-3 w-3 text-red-500" />
+                <span className="truncate">{c}</span>
+                <Badge variant="destructive" className="ml-auto text-xs">
+                  regressed
+                </Badge>
               </div>
-            </div>
-          ))}
-          {allCases.slice(0, 5).map((c, i) => (
-            <div key={`case-${i}`} className="flex items-center gap-2">
-              <span className="text-red-400 text-xs">◆</span>
-              <span className="text-gray-300 text-sm truncate">{c}</span>
-              <span className="text-red-400 text-xs ml-auto">regressed</span>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  )
 }
