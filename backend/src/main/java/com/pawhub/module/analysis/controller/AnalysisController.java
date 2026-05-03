@@ -5,6 +5,7 @@ import com.pawhub.module.analysis.dto.*;
 import com.pawhub.module.analysis.entity.TrendSnapshot;
 import com.pawhub.module.analysis.repository.*;
 import com.pawhub.module.analysis.service.RegressionDetectionService;
+import com.pawhub.module.collection.repository.TestRunRepository;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.*;
@@ -16,11 +17,13 @@ public class AnalysisController {
     private final FlakyTestRecordRepository flakyRepo;
     private final FailureClusterRepository clusterRepo;
     private final RegressionDetectionService regressionService;
+    private final TestRunRepository testRunRepo;
 
     public AnalysisController(TrendSnapshotRepository t, FlakyTestRecordRepository f,
-                              FailureClusterRepository c, RegressionDetectionService r) {
+                              FailureClusterRepository c, RegressionDetectionService r,
+                              TestRunRepository tr) {
         this.trendRepo = t; this.flakyRepo = f; this.clusterRepo = c;
-        this.regressionService = r;
+        this.regressionService = r; this.testRunRepo = tr;
     }
 
     @GetMapping("/trends")
@@ -36,7 +39,7 @@ public class AnalysisController {
         }
         LocalDate to = LocalDate.now();
         LocalDate from = to.minusDays(days);
-        String[] envs = environment != null ? new String[]{environment} : new String[]{"dev","staging","prod"};
+        List<String> envs = environment != null ? List.of(environment) : testRunRepo.findDistinctEnvironments(projectId);
         var responses = new ArrayList<TrendResponse>();
         for (String env : envs) {
             var snaps = trendRepo.findByProjectIdAndEnvironmentAndPeriodTypeAndDateBetweenOrderByDateAsc(

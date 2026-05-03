@@ -5,6 +5,7 @@ import com.pawhub.module.analysis.repository.TrendSnapshotRepository;
 import com.pawhub.module.collection.entity.TestExecution;
 import com.pawhub.module.collection.entity.TestStatus;
 import com.pawhub.module.collection.repository.TestExecutionRepository;
+import com.pawhub.module.collection.repository.TestRunRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -17,14 +18,17 @@ import java.util.*;
 public class RegressionDetectionService {
     private final TrendSnapshotRepository trendRepo;
     private final TestExecutionRepository executionRepo;
+    private final TestRunRepository testRunRepo;
     private final double sigma;
     private final int consecutivePassCount;
 
     public RegressionDetectionService(TrendSnapshotRepository tr, TestExecutionRepository er,
+                                      TestRunRepository rr,
                                       @Value("${analysis.regression-sigma}") double sigma,
                                       @Value("${analysis.consecutive-pass-count}") int consecutivePassCount) {
         this.trendRepo = tr;
         this.executionRepo = er;
+        this.testRunRepo = rr;
         this.sigma = sigma;
         this.consecutivePassCount = consecutivePassCount;
     }
@@ -34,7 +38,7 @@ public class RegressionDetectionService {
 
     public List<RegressionResult> detectAll(Long projectId) {
         List<RegressionResult> results = new ArrayList<>();
-        String[] envs = {"dev", "staging", "prod"};
+        List<String> envs = testRunRepo.findDistinctEnvironments(projectId);
         LocalDate today = LocalDate.now();
         for (String env : envs) {
             var snap = trendRepo.findByProjectIdAndDateAndEnvironmentAndPeriodType(

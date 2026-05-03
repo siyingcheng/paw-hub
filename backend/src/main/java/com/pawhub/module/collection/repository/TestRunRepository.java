@@ -16,4 +16,7 @@ public interface TestRunRepository extends JpaRepository<TestRun, Long> {
         Long projectId, String environment, Instant from, Instant to);
 
     List<TestRun> findByProjectIdAndCreatedAtAfter(Long projectId, Instant since);
+
+    @Query("SELECT DISTINCT r.environment FROM TestRun r WHERE r.project.id = :projectId")
+    List<String> findDistinctEnvironments(@Param("projectId") Long projectId);
 }
