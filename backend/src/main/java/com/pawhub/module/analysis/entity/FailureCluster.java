@@ -2,12 +2,12 @@ package com.pawhub.module.analysis.entity;
 import jakarta.persistence.*;
 import java.time.Instant;
 
-@Entity @Table(name = "failure_clusters")
+@Entity @Table(name = "failure_clusters", uniqueConstraints = @UniqueConstraint(columnNames = {"project_id", "cluster_key"}))
 public class FailureCluster {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false) private Long projectId;
-    @Column(nullable = false, unique = true) private String clusterKey;
+    @Column(nullable = false) private String clusterKey;
     @Column(length = 1000) private String representativeError;
     private int occurrenceCount;
     private Instant firstSeen;

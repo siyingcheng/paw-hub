@@ -35,7 +35,7 @@ public class TrendAnalysisService {
         snap.setPassRate(runs.stream().mapToDouble(r -> r.getTotalCases() > 0 ? (double)r.getPassed()/r.getTotalCases() : 1.0).average().orElse(0));
         snap.setFailureRate(runs.stream().mapToDouble(r -> r.getTotalCases() > 0 ? (double)r.getFailed()/r.getTotalCases() : 0.0).average().orElse(0));
         snap.setAvgDurationMs(runs.stream().mapToDouble(TestRun::getDurationMs).average().orElse(0));
-        snap.setRetryRate(0.0);
+        snap.setRetryRate(runs.stream().mapToDouble(r -> r.getTotalCases() > 0 ? (double)r.getRetried()/r.getTotalCases() : 0.0).average().orElse(0));
         trendRepo.save(snap);
     }
 
@@ -57,7 +57,7 @@ public class TrendAnalysisService {
         snap.setPassRate(runs.stream().mapToDouble(r -> r.getTotalCases() > 0 ? (double)r.getPassed()/r.getTotalCases() : 1.0).average().orElse(0));
         snap.setFailureRate(runs.stream().mapToDouble(r -> r.getTotalCases() > 0 ? (double)r.getFailed()/r.getTotalCases() : 0.0).average().orElse(0));
         snap.setAvgDurationMs(runs.stream().mapToDouble(TestRun::getDurationMs).average().orElse(0));
-        snap.setRetryRate(0.0);
+        snap.setRetryRate(runs.stream().mapToDouble(r -> r.getTotalCases() > 0 ? (double)r.getRetried()/r.getTotalCases() : 0.0).average().orElse(0));
         trendRepo.save(snap);
     }
 }

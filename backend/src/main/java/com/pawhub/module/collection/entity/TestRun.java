@@ -19,6 +19,7 @@ public class TestRun {
     private int passed;
     private int failed;
     private int skipped;
+    private int retried;
     private long durationMs;
     @Enumerated(EnumType.STRING) @Column(nullable = false) private TestStatus status;
     @Lob @Column(columnDefinition = "CLOB") private String rawXml;
@@ -35,6 +36,7 @@ public class TestRun {
     public int getPassed() { return passed; } public void setPassed(int n) { this.passed = n; }
     public int getFailed() { return failed; } public void setFailed(int n) { this.failed = n; }
     public int getSkipped() { return skipped; } public void setSkipped(int n) { this.skipped = n; }
+    public int getRetried() { return retried; } public void setRetried(int n) { this.retried = n; }
     public long getDurationMs() { return durationMs; } public void setDurationMs(long n) { this.durationMs = n; }
     public TestStatus getStatus() { return status; } public void setStatus(TestStatus s) { this.status = s; }
     public String getRawXml() { return rawXml; } public void setRawXml(String s) { this.rawXml = s; }
