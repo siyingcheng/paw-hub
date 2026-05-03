@@ -6,15 +6,14 @@ import org.w3c.dom.*;
 import javax.xml.parsers.*;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Component
 public class JUnitXmlParser {
 
-    public record ParseResult(List<Execution> executions, int totalCases, int passed, int failed, int skipped, long durationMs) {}
+    public record ParseResult(List<Execution> executions, int totalCases, int passed, int failed, int skipped, int retried, long durationMs) {}
 
-    public record Execution(String suiteName, String className, String testName, TestStatus status,
+    public record Execution(String suiteName, String className, String testName, int attempt, TestStatus status,
                             long durationMs, String errorMessage, String errorType, String stackTrace) {}
 
     public ParseResult parse(String xml) {
@@ -23,7 +22,7 @@ public class JUnitXmlParser {
                 .parse(new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8)));
             doc.getDocumentElement().normalize();
 
-            List<Execution> executions = new ArrayList<>();
+            List<Execution> raw = new ArrayList<>();
             int total = 0, passed = 0, failed = 0, skipped = 0;
             long totalDuration = 0;
 
@@ -69,10 +68,22 @@ public class JUnitXmlParser {
                         status = TestStatus.PASS;
                         passed++;
                     }
-                    executions.add(new Execution(suiteName, cn, tn, status, dur, errMsg, errType, stack));
+                    raw.add(new Execution(suiteName, cn, tn, 1, status, dur, errMsg, errType, stack));
                 }
             }
-            return new ParseResult(executions, total, passed, failed, skipped, totalDuration);
+
+            // Assign attempt numbers: group by (suite, class, name), number sequentially
+            Map<String, Integer> seen = new HashMap<>();
+            List<Execution> executions = new ArrayList<>();
+            for (Execution e : raw) {
+                String key = e.suiteName() + "#" + e.className() + "#" + e.testName();
+                int attempt = seen.merge(key, 1, Integer::sum);
+                executions.add(new Execution(e.suiteName(), e.className(), e.testName(),
+                    attempt, e.status(), e.durationMs(), e.errorMessage(), e.errorType(), e.stackTrace()));
+            }
+            int retried = (int) seen.values().stream().filter(v -> v > 1).count();
+
+            return new ParseResult(executions, total, passed, failed, skipped, retried, totalDuration);
         } catch (Exception e) {
             throw new RuntimeException("Failed to parse JUnit XML: " + e.getMessage(), e);
         }

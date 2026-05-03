@@ -49,7 +49,7 @@ public class CollectionService {
         run.setPassed(parsed.passed());
         run.setFailed(parsed.failed());
         run.setSkipped(parsed.skipped());
-        run.setRetried(0); // TODO: detect retries from XML (attempt > 1)
+        run.setRetried(parsed.retried());
         run.setDurationMs(parsed.durationMs());
         run.setStatus(parsed.failed() > 0 ? TestStatus.FAIL : TestStatus.PASS);
         run.setRawXml(xml);
@@ -59,7 +59,7 @@ public class CollectionService {
         for (var ex : parsed.executions()) {
             TestExecution te = new TestExecution();
             te.setTestRun(run);
-            te.setAttempt(1);
+            te.setAttempt(ex.attempt());
             te.setSuiteName(ex.suiteName());
             te.setClassName(ex.className());
             te.setTestName(ex.testName());
