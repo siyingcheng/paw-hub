@@ -1,4 +1,4 @@
-import { getToken } from './auth';
+import { getToken, clearAuth } from './auth';
 import type {
   TestRun, TestExecution, TrendResponse, FlakyTest,
   FailureClusterItem, TriageResponse, TriageSummary, SummaryResponse,
@@ -18,7 +18,16 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   }
 
   const res = await fetch(`${BASE_URL}/api/v1${path}`, { ...options, headers });
-  const json = await res.json();
+
+  let json: any;
+  try { json = await res.json(); } catch { json = {} }
+
+  if (json.success === undefined && (res.status === 401 || res.status === 403)) {
+    clearAuth();
+    if (typeof window !== 'undefined') window.location.href = '/login?expired=true';
+    throw new Error('Session expired. Please log in again.');
+  }
+
   if (!json.success) throw new Error(json.message || 'Request failed');
   return json.data;
 }

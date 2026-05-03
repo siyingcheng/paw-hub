@@ -1,7 +1,7 @@
 "use client"
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { api } from "@/lib/api"
 import { setToken } from "@/lib/auth"
@@ -23,10 +23,18 @@ function getLastProjectId(): number {
 
 export default function LoginPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const [rememberMe, setRememberMe] = useState(true)
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (searchParams.get("expired") === "true") {
+      toast.error("Session expired. Please log in again.")
+      router.replace("/login")
+    }
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
