@@ -45,8 +45,8 @@ public class TriageService {
             .orElse(null);
     }
 
-    public TriageSummaryResponse getSummary(Long projectId) {
-        Instant since = Instant.now().minus(30, ChronoUnit.DAYS);
+    public TriageSummaryResponse getSummary(Long projectId, int days) {
+        Instant since = Instant.now().minus(days, ChronoUnit.DAYS);
         List<Object[]> counts = triageRepo.countByStatus(projectId, since);
         var breakdown = new HashMap<FailureTriage.TriageStatus, Long>();
         long total = 0;

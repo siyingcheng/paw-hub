@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Badge } from "@/components/ui/badge"
-import { Menu, LayoutDashboard, TrendingUp, Settings } from "lucide-react"
+import { Menu, LayoutDashboard, TrendingUp, Settings, List } from "lucide-react"
 
 interface SidebarLink {
   href: string
@@ -25,6 +25,7 @@ export default function Sidebar({
 
   const allLinks: SidebarLink[] = [
     { href: "", label: "Dashboard", icon: <LayoutDashboard className="h-5 w-5" /> },
+    { href: "/runs", label: "Test Runs", icon: <List className="h-5 w-5" /> },
     { href: "/trends", label: "Trends", icon: <TrendingUp className="h-5 w-5" /> },
   ]
 

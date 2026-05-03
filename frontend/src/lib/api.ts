@@ -84,8 +84,8 @@ export const api = {
       }),
     get: (projectId: number, executionId: number) =>
       request<TriageResponse>(`/projects/${projectId}/test-executions/${executionId}/triage`),
-    getSummary: (projectId: number) =>
-      request<TriageSummary>(`/projects/${projectId}/triage-summary`),
+    getSummary: (projectId: number, days = 30) =>
+      request<TriageSummary>(`/projects/${projectId}/triage-summary?days=${days}`),
   },
 
   reporting: {

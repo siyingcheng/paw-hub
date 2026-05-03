@@ -1,6 +1,7 @@
 package com.pawhub.module.collection.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 
 @Entity @Table(name = "test_executions",
        uniqueConstraints = @UniqueConstraint(columnNames = {"test_run_id","suite_name","class_name","test_name","attempt"}))
@@ -9,7 +10,7 @@ public class TestExecution {
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "test_run_id", nullable = false)
     private TestRun testRun;
-    @Column(nullable = false) private int attempt = 1;
+    @Min(1) @Column(nullable = false) private int attempt = 1;
     @Column(nullable = false) private String suiteName;
     @Column(nullable = false) private String className;
     @Column(nullable = false) private String testName;

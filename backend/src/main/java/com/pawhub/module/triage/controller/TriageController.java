@@ -39,8 +39,9 @@ public class TriageController {
     }
 
     @GetMapping("/triage-summary")
-    public ApiResponse<TriageSummaryResponse> getSummary(@PathVariable Long projectId) {
-        return ApiResponse.ok(triageService.getSummary(projectId));
+    public ApiResponse<TriageSummaryResponse> getSummary(@PathVariable Long projectId,
+            @RequestParam(defaultValue = "30") int days) {
+        return ApiResponse.ok(triageService.getSummary(projectId, days));
     }
 
     private void assertMember(Long projectId, Long userId) {
