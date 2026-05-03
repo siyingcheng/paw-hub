@@ -60,4 +60,23 @@ class JUnitXmlParserTest {
         assertThat(r.executions().get(0).status()).isEqualTo(TestStatus.ERROR);
         assertThat(r.failed()).isEqualTo(1);
     }
+
+    @Test
+    void shouldDetectRetries() {
+        String xml = """
+            <?xml version="1.0"?>
+            <testsuite name="S" tests="4" failures="0" errors="0" skipped="0" time="3.0">
+                <testcase name="flaky" classname="c" time="1.0"/>
+                <testcase name="flaky" classname="c" time="1.0"/>
+                <testcase name="flaky" classname="c" time="1.0"/>
+                <testcase name="stable" classname="c" time="0.0"/>
+            </testsuite>""";
+        JUnitXmlParser.ParseResult r = parser.parse(xml);
+        assertThat(r.executions()).hasSize(4);
+        assertThat(r.executions().get(0).attempt()).isEqualTo(1);
+        assertThat(r.executions().get(1).attempt()).isEqualTo(2);
+        assertThat(r.executions().get(2).attempt()).isEqualTo(3);
+        assertThat(r.executions().get(3).attempt()).isEqualTo(1);
+        assertThat(r.retried()).isEqualTo(1); // only "flaky" was retried
+    }
 }
