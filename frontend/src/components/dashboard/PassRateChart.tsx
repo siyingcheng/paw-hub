@@ -59,7 +59,7 @@ export default function PassRateChart({ trends }: Props) {
           <LineChart data={data}>
             <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
             <XAxis dataKey="date" stroke="#94a3b8" fontSize={12} />
-            <YAxis stroke="#94a3b8" fontSize={12} domain={[80, 100]} />
+            <YAxis stroke="#94a3b8" fontSize={12} />
             <Tooltip />
             <Legend />
             {["dev", "staging", "prod"].map(env => (

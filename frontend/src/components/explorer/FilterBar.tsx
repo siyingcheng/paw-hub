@@ -14,8 +14,6 @@ interface Props {
   onSearchChange: (v: string) => void
   statusFilter: string
   onStatusChange: (v: string) => void
-  envFilter: string
-  onEnvChange: (v: string) => void
 }
 
 export default function FilterBar({
@@ -23,8 +21,6 @@ export default function FilterBar({
   onSearchChange,
   statusFilter,
   onStatusChange,
-  envFilter,
-  onEnvChange,
 }: Props) {
   return (
     <div className="flex gap-3 mb-4 flex-wrap">
@@ -44,17 +40,6 @@ export default function FilterBar({
           <SelectItem value="PASS">PASS</SelectItem>
           <SelectItem value="SKIP">SKIP</SelectItem>
           <SelectItem value="ERROR">ERROR</SelectItem>
-        </SelectContent>
-      </Select>
-      <Select value={envFilter} onValueChange={onEnvChange}>
-        <SelectTrigger className="w-[130px]">
-          <SelectValue placeholder="All envs" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">All envs</SelectItem>
-          <SelectItem value="dev">dev</SelectItem>
-          <SelectItem value="staging">staging</SelectItem>
-          <SelectItem value="prod">prod</SelectItem>
         </SelectContent>
       </Select>
     </div>

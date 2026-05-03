@@ -23,7 +23,6 @@ export default function TestExplorerPage() {
   const [executions, setExecutions] = useState<TestExecution[]>([])
   const [search, setSearch] = useState("")
   const [statusFilter, setStatusFilter] = useState("")
-  const [envFilter, setEnvFilter] = useState("")
   const [refreshKey, setRefreshKey] = useState(0)
   const [loading, setLoading] = useState(true)
 
@@ -116,8 +115,6 @@ export default function TestExplorerPage() {
             onSearchChange={setSearch}
             statusFilter={statusFilter}
             onStatusChange={setStatusFilter}
-            envFilter={envFilter}
-            onEnvChange={setEnvFilter}
           />
           <TestTable
             projectId={id}
