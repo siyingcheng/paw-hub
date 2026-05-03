@@ -1,8 +1,7 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { TestExecution, TriageResponse } from "@/lib/types"
-import { api } from "@/lib/api"
+import { useState } from "react"
+import { TestExecution } from "@/lib/types"
 import {
   Table,
   TableBody,
@@ -43,31 +42,11 @@ export default function TestTable({
   executions,
   onTriageSaved,
 }: Props) {
-  const [triages, setTriages] = useState<Map<number, TriageResponse>>(new Map())
-
-  useEffect(() => {
-    Promise.all(executions.map(e => api.triage.get(projectId, e.id))).then(
-      tList => {
-        const map = new Map<number, TriageResponse>()
-        tList.forEach((t, i) => {
-          if (t) map.set(executions[i].id, t)
-        })
-        setTriages(map)
-      }
-    )
-  }, [executions, projectId])
+  const [refreshKey, setRefreshKey] = useState(0)
 
   const handleTriageSaved = () => {
     onTriageSaved()
-    Promise.all(executions.map(e => api.triage.get(projectId, e.id))).then(
-      tList => {
-        const map = new Map<number, TriageResponse>()
-        tList.forEach((t, i) => {
-          if (t) map.set(executions[i].id, t)
-        })
-        setTriages(map)
-      }
-    )
+    setRefreshKey(k => k + 1)
   }
 
   return (
@@ -88,7 +67,6 @@ export default function TestTable({
         </TableHeader>
         <TableBody>
           {executions.map((e, i) => {
-            const t = triages.get(e.id)
             const isFailure = e.status === "FAIL" || e.status === "ERROR"
             return (
               <TableRow
@@ -128,11 +106,9 @@ export default function TestTable({
                     <TriageModal
                       projectId={projectId}
                       executionId={e.id}
-                      currentStatus={
-                        t?.triageStatus || "UNTRIAGED"
-                      }
-                      currentIssueLink={t?.issueLink || ""}
-                      currentComment={t?.comment || ""}
+                      currentStatus={e.triageStatus || "UNTRIAGED"}
+                      currentIssueLink={e.issueLink || ""}
+                      currentComment=""
                       onSaved={handleTriageSaved}
                     />
                   ) : null}

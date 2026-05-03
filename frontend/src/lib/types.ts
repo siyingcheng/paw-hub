@@ -52,6 +52,8 @@ export interface TestExecution {
   errorMessage?: string;
   errorType?: string;
   stackTrace?: string;
+  triageStatus?: string;
+  issueLink?: string;
 }
 
 export interface TrendDataPoint {

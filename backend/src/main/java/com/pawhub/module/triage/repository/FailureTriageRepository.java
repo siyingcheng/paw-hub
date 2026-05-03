@@ -10,6 +10,8 @@ import java.util.Optional;
 public interface FailureTriageRepository extends JpaRepository<FailureTriage, Long> {
     Optional<FailureTriage> findByTestExecutionId(Long executionId);
 
+    List<FailureTriage> findByTestExecutionIdIn(List<Long> executionIds);
+
     @Query("SELECT ft.triageStatus, COUNT(ft) FROM FailureTriage ft " +
            "JOIN ft.testExecution te JOIN te.testRun tr " +
            "WHERE tr.project.id = :projectId AND tr.createdAt >= :since " +

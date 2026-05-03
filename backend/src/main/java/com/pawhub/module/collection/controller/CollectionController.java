@@ -4,23 +4,29 @@ import com.pawhub.common.dto.ApiResponse;
 import com.pawhub.module.collection.dto.TestExecutionResponse;
 import com.pawhub.module.collection.dto.TestRunDetailResponse;
 import com.pawhub.module.collection.dto.TestRunResponse;
+import com.pawhub.module.collection.entity.TestExecution;
 import com.pawhub.module.collection.entity.TestRun;
 import com.pawhub.module.collection.repository.TestRunRepository;
 import com.pawhub.module.collection.service.CollectionService;
+import com.pawhub.module.triage.entity.FailureTriage;
+import com.pawhub.module.triage.repository.FailureTriageRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/projects/{projectId}")
 public class CollectionController {
     private final CollectionService service;
     private final TestRunRepository testRunRepo;
-    public CollectionController(CollectionService s, TestRunRepository tr) {
-        this.service = s; this.testRunRepo = tr;
+    private final FailureTriageRepository triageRepo;
+    public CollectionController(CollectionService s, TestRunRepository tr, FailureTriageRepository ft) {
+        this.service = s; this.testRunRepo = tr; this.triageRepo = ft;
     }
 
     @PostMapping(value = "/test-results", consumes = "multipart/form-data")
@@ -66,8 +72,17 @@ public class CollectionController {
     public ApiResponse<TestRunDetailResponse> getRun(@PathVariable Long projectId,
                                                       @PathVariable Long runId) {
         TestRun run = service.getRun(projectId, runId);
-        var execs = service.getExecutions(runId).stream()
-            .map(TestExecutionResponse::from).toList();
-        return ApiResponse.ok(TestRunDetailResponse.from(run, execs));
+        List<TestExecution> execs = service.getExecutions(runId);
+        List<Long> execIds = execs.stream().map(TestExecution::getId).toList();
+        Map<Long, FailureTriage> triages = triageRepo.findByTestExecutionIdIn(execIds).stream()
+            .collect(Collectors.toMap(t -> t.getTestExecution().getId(), t -> t));
+        var execResponses = execs.stream()
+            .map(e -> {
+                FailureTriage t = triages.get(e.getId());
+                return t != null
+                    ? TestExecutionResponse.from(e, t.getTriageStatus().name(), t.getIssueLink())
+                    : TestExecutionResponse.from(e);
+            }).toList();
+        return ApiResponse.ok(TestRunDetailResponse.from(run, execResponses));
     }
 }
