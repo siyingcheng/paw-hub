@@ -5,21 +5,12 @@ import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { api } from "@/lib/api"
 import { setToken } from "@/lib/auth"
+import { getLastProjectId } from "@/lib/recent-projects"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-
-function getLastProjectId(): number {
-  if (typeof window === "undefined") return 1
-  try {
-    const recent = JSON.parse(localStorage.getItem("pawhub_recent_projects") || "[]")
-    return recent[0]?.id || 1
-  } catch {
-    return 1
-  }
-}
 
 export default function LoginPage() {
   const router = useRouter()
