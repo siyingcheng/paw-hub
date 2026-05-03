@@ -1,6 +1,7 @@
 package com.pawhub.module.collection.controller;
 
 import com.pawhub.common.dto.ApiResponse;
+import com.pawhub.common.dto.PagedResponse;
 import com.pawhub.module.collection.dto.TestExecutionResponse;
 import com.pawhub.module.collection.dto.TestRunDetailResponse;
 import com.pawhub.module.collection.dto.TestRunResponse;
@@ -59,13 +60,14 @@ public class CollectionController {
     }
 
     @GetMapping("/test-runs")
-    public ApiResponse<List<TestRunResponse>> getRuns(@PathVariable Long projectId,
+    public ApiResponse<PagedResponse<TestRunResponse>> getRuns(@PathVariable Long projectId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
         var pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-        var runs = testRunRepo.findByProjectId(projectId, pageable)
-            .map(TestRunResponse::from).toList();
-        return ApiResponse.ok(runs);
+        var pageResult = testRunRepo.findByProjectId(projectId, pageable);
+        var runs = pageResult.map(TestRunResponse::from).toList();
+        return ApiResponse.ok(new PagedResponse<>(runs, page, size,
+            pageResult.getTotalElements(), pageResult.getTotalPages()));
     }
 
     @GetMapping("/test-runs/{runId}")

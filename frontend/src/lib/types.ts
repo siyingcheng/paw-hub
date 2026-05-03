@@ -113,6 +113,14 @@ export interface ProjectInfo {
   teamName: string;
 }
 
+export interface PagedResponse<T> {
+  items: T[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+}
+
 export interface ProjectListItem {
   id: number;
   name: string;

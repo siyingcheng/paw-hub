@@ -39,7 +39,7 @@ export default function RunsListPage() {
     setLoading(true)
     api.collection
       .getRuns(id)
-      .then(setRuns)
+      .then(res => setRuns(res.items))
       .catch(err => toast.error(err.message))
       .finally(() => setLoading(false))
   }, [id])

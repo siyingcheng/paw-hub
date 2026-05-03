@@ -2,7 +2,7 @@ import { getToken, clearAuth } from './auth';
 import type {
   TestRun, TestExecution, TrendResponse, FlakyTest,
   FailureClusterItem, TriageResponse, TriageSummary, SummaryResponse,
-  MeResponse, RegressionResponse, TeamMember, ProjectInfo, ProjectListItem, AnalysisConfig,
+  MeResponse, RegressionResponse, TeamMember, ProjectInfo, ProjectListItem, AnalysisConfig, PagedResponse,
 } from './types';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
@@ -60,8 +60,8 @@ export const api = {
       request<TestRun>(`/projects/${projectId}/test-results`, {
         method: 'POST', body: formData,
       }),
-    getRuns: (projectId: number, params?: string) =>
-      request<TestRun[]>(`/projects/${projectId}/test-runs${params ? '?' + params : ''}`),
+    getRuns: (projectId: number, page = 0, size = 20) =>
+      request<PagedResponse<TestRun>>(`/projects/${projectId}/test-runs?page=${page}&size=${size}`),
     getRun: (projectId: number, runId: number) =>
       request<TestRun & { executions: TestExecution[] }>(`/projects/${projectId}/test-runs/${runId}`),
   },
