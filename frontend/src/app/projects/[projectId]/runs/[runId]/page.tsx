@@ -116,14 +116,20 @@ export default function TestExplorerPage() {
             statusFilter={statusFilter}
             onStatusChange={setStatusFilter}
           />
-          <TestTable
-            projectId={id}
-            executions={filtered}
-            onTriageSaved={() => {
-              setRefreshKey(k => k + 1)
-              toast.success("Triage saved")
-            }}
-          />
+          {executions.length > 0 && filtered.length === 0 ? (
+            <p className="text-muted-foreground text-sm py-8 text-center">
+              No tests match the current filters
+            </p>
+          ) : (
+            <TestTable
+              projectId={id}
+              executions={filtered}
+              onTriageSaved={() => {
+                setRefreshKey(k => k + 1)
+                toast.success("Triage saved")
+              }}
+            />
+          )}
         </main>
       </div>
     </div>

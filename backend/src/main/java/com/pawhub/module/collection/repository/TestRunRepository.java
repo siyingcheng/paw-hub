@@ -14,4 +14,6 @@ public interface TestRunRepository extends JpaRepository<TestRun, Long> {
 
     List<TestRun> findByProjectIdAndEnvironmentAndCreatedAtBetween(
         Long projectId, String environment, Instant from, Instant to);
+
+    List<TestRun> findByProjectIdAndCreatedAtAfter(Long projectId, Instant since);
 }

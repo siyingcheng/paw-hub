@@ -26,6 +26,8 @@ public class AuthService {
     public AuthResponse register(RegisterRequest r) {
         if (userRepo.existsByUsername(r.username()))
             throw new PawHubException("Username already taken", HttpStatus.CONFLICT);
+        if (userRepo.existsByEmail(r.email()))
+            throw new PawHubException("Email already registered", HttpStatus.CONFLICT);
         User u = new User(r.username(), r.email(), passwordEncoder.encode(r.password()));
         u = userRepo.save(u);
         return new AuthResponse(jwt.generateToken(u.getId(), u.getUsername()), u.getId(), u.getUsername());

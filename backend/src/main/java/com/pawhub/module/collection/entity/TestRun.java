@@ -10,7 +10,7 @@ public class TestRun {
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(name = "project_id", nullable = false)
     private Project project;
-    @Column(nullable = false) private String runIdentifier;
+    private String runIdentifier;
     private String branch;
     private String commitSha;
     private String triggeredBy;

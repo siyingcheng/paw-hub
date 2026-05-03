@@ -1,7 +1,10 @@
 package com.pawhub.module.reporting.service;
 
+import com.pawhub.module.analysis.repository.FlakyTestRecordRepository;
 import com.pawhub.module.collection.entity.TestExecution;
+import com.pawhub.module.collection.entity.TestRun;
 import com.pawhub.module.collection.repository.TestExecutionRepository;
+import com.pawhub.module.collection.repository.TestRunRepository;
 import com.pawhub.module.reporting.dto.*;
 import org.springframework.stereotype.Service;
 import java.time.Instant;
@@ -13,11 +16,22 @@ import java.util.stream.Collectors;
 @Service
 public class SummaryService {
     private final TestExecutionRepository executionRepo;
+    private final TestRunRepository testRunRepo;
+    private final FlakyTestRecordRepository flakyRepo;
 
-    public SummaryService(TestExecutionRepository e) { this.executionRepo = e; }
+    public SummaryService(TestExecutionRepository e, TestRunRepository r, FlakyTestRecordRepository f) {
+        this.executionRepo = e; this.testRunRepo = r; this.flakyRepo = f;
+    }
 
     public SummaryResponse getSummary(Long projectId, int days) {
         Instant since = Instant.now().minus(days, ChronoUnit.DAYS);
+
+        var runs = testRunRepo.findByProjectIdAndCreatedAtAfter(projectId, since);
+        long totalRuns = runs.size();
+        double overallPassRate = runs.isEmpty() ? 0
+            : runs.stream().mapToDouble(r -> r.getTotalCases() == 0 ? 0 : (double) r.getPassed() / r.getTotalCases())
+                .average().orElse(0);
+
         var failures = executionRepo.findRecentFailures(projectId, since);
         long totalFailures = failures.size();
 
@@ -36,6 +50,12 @@ public class SummaryService {
                 topFailure = new TopFailure(top.getKey(), errMsg, top.getValue());
             }
         }
-        return new SummaryResponse(0, 0, totalFailures, topFailure, List.of());
+
+        var topFlaky = flakyRepo.findByProjectIdOrderByFlakyScoreDesc(projectId).stream()
+            .limit(5)
+            .map(f -> new FlakySummary(f.getTestCaseKey(), f.getFlakyScore()))
+            .toList();
+
+        return new SummaryResponse(totalRuns, overallPassRate, totalFailures, topFailure, topFlaky);
     }
 }
