@@ -2,6 +2,7 @@ package com.pawhub.module.auth.controller;
 
 import com.pawhub.common.dto.ApiResponse;
 import com.pawhub.common.exception.PawHubException;
+import com.pawhub.config.AnalysisProperties;
 import com.pawhub.module.auth.entity.Project;
 import com.pawhub.module.auth.repository.MembershipRepository;
 import com.pawhub.module.auth.repository.ProjectRepository;
@@ -15,9 +16,10 @@ import org.springframework.web.bind.annotation.*;
 public class ProjectRoleController {
     private final ProjectRepository projectRepo;
     private final MembershipRepository membershipRepo;
+    private final AnalysisProperties analysisProps;
 
-    public ProjectRoleController(ProjectRepository p, MembershipRepository m) {
-        this.projectRepo = p; this.membershipRepo = m;
+    public ProjectRoleController(ProjectRepository p, MembershipRepository m, AnalysisProperties ap) {
+        this.projectRepo = p; this.membershipRepo = m; this.analysisProps = ap;
     }
 
     @GetMapping("/my-role")
@@ -41,6 +43,15 @@ public class ProjectRoleController {
             project.getTeam().getName()));
     }
 
+    @GetMapping("/analysis-config")
+    public ApiResponse<AnalysisConfigResponse> getAnalysisConfig() {
+        return ApiResponse.ok(new AnalysisConfigResponse(
+            analysisProps.getFlakyThreshold(),
+            analysisProps.getRegressionSigma(),
+            analysisProps.getWindowDays()));
+    }
+
     public record RoleResponse(String role) {}
     public record ProjectResponse(Long id, String name, String apiKey, String teamName) {}
+    public record AnalysisConfigResponse(double flakyThreshold, double regressionSigma, int windowDays) {}
 }

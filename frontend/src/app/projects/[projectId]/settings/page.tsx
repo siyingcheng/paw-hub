@@ -6,7 +6,7 @@ import Navbar from "@/components/layout/Navbar"
 import Sidebar from "@/components/layout/Sidebar"
 import { api } from "@/lib/api"
 import { toast } from "sonner"
-import type { ProjectInfo, TeamMember } from "@/lib/types"
+import type { ProjectInfo, TeamMember, AnalysisConfig } from "@/lib/types"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Table,
@@ -48,6 +48,7 @@ export default function SettingsPage() {
   const [projectInfo, setProjectInfo] = useState<ProjectInfo | null>(null)
   const [members, setMembers] = useState<TeamMember[]>([])
   const [membersLoading, setMembersLoading] = useState(true)
+  const [analysisConfig, setAnalysisConfig] = useState<AnalysisConfig | null>(null)
   const [removeTarget, setRemoveTarget] = useState<TeamMember | null>(null)
 
   const fetchMembers = useCallback(() => {
@@ -72,6 +73,7 @@ export default function SettingsPage() {
       .catch(() => setChecked(true))
 
     api.project.get(id).then(setProjectInfo).catch(() => {})
+    api.project.getAnalysisConfig(id).then(setAnalysisConfig).catch(() => {})
     fetchMembers()
   }, [id])
 
@@ -149,19 +151,25 @@ export default function SettingsPage() {
                   <span className="text-muted-foreground">
                     Flaky Threshold:
                   </span>
-                  <span className="ml-2">0.3</span>
+                  <span className="ml-2">
+                    {analysisConfig?.flakyThreshold ?? "—"}
+                  </span>
                 </div>
                 <div>
                   <span className="text-muted-foreground">
                     Regression Sigma:
                   </span>
-                  <span className="ml-2">2.0</span>
+                  <span className="ml-2">
+                    {analysisConfig?.regressionSigma ?? "—"}
+                  </span>
                 </div>
                 <div>
                   <span className="text-muted-foreground">
                     Analysis Window:
                   </span>
-                  <span className="ml-2">30 days</span>
+                  <span className="ml-2">
+                    {analysisConfig ? `${analysisConfig.windowDays} days` : "—"}
+                  </span>
                 </div>
               </div>
               <div className="mt-4 p-3 bg-secondary rounded-lg text-xs">

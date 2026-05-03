@@ -111,6 +111,12 @@ export interface ProjectInfo {
   teamName: string;
 }
 
+export interface AnalysisConfig {
+  flakyThreshold: number;
+  regressionSigma: number;
+  windowDays: number;
+}
+
 export interface TeamMember {
   userId: number;
   username: string;
