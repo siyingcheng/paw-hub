@@ -1,15 +1,8 @@
-"use client"
-
-import { Field } from "@base-ui/react/field"
-
 import { cn } from "@/lib/utils"
 
-function Label({
-  className,
-  ...props
-}: React.ComponentProps<typeof Field.Label>) {
+function Label({ className, ...props }: React.LabelHTMLAttributes<HTMLLabelElement>) {
   return (
-    <Field.Label
+    <label
       data-slot="label"
       className={cn(
         "text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50",

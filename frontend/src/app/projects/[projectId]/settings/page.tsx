@@ -134,12 +134,6 @@ export default function SettingsPage() {
                   <span className="ml-2">{projectInfo?.name || "—"}</span>
                 </div>
                 <div>
-                  <span className="text-muted-foreground">Organization:</span>
-                  <span className="ml-2">
-                    {projectInfo?.orgName || "—"}
-                  </span>
-                </div>
-                <div>
                   <span className="text-muted-foreground">Team:</span>
                   <span className="ml-2">
                     {projectInfo?.teamName || "—"}

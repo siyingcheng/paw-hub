@@ -34,13 +34,13 @@ public class ProjectRoleController {
     @GetMapping
     @Transactional(readOnly = true)
     public ApiResponse<ProjectResponse> getProject(@PathVariable Long projectId) {
-        var project = projectRepo.findByIdWithTeamAndOrg(projectId)
+        var project = projectRepo.findByIdWithTeam(projectId)
             .orElseThrow(() -> new PawHubException("Project not found", HttpStatus.NOT_FOUND));
         return ApiResponse.ok(new ProjectResponse(
             project.getId(), project.getName(), project.getApiKey(),
-            project.getTeam().getName(), project.getTeam().getOrganization().getName()));
+            project.getTeam().getName()));
     }
 
     public record RoleResponse(String role) {}
-    public record ProjectResponse(Long id, String name, String apiKey, String teamName, String orgName) {}
+    public record ProjectResponse(Long id, String name, String apiKey, String teamName) {}
 }

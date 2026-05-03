@@ -11,24 +11,19 @@ import java.util.List;
 
 @Service
 public class TenantService {
-    private final OrganizationRepository orgRepo;
     private final TeamRepository teamRepo;
     private final ProjectRepository projectRepo;
     private final MembershipRepository membershipRepo;
     private final UserRepository userRepo;
 
-    public TenantService(OrganizationRepository o, TeamRepository t, ProjectRepository p,
+    public TenantService(TeamRepository t, ProjectRepository p,
                          MembershipRepository m, UserRepository u) {
-        this.orgRepo = o; this.teamRepo = t; this.projectRepo = p;
+        this.teamRepo = t; this.projectRepo = p;
         this.membershipRepo = m; this.userRepo = u;
     }
 
-    public Organization createOrg(String name) { return orgRepo.save(new Organization(name)); }
-
-    public Team createTeam(Long orgId, String name) {
-        Organization org = orgRepo.findById(orgId)
-            .orElseThrow(() -> new PawHubException("Org not found", HttpStatus.NOT_FOUND));
-        return teamRepo.save(new Team(name, org));
+    public Team createTeam(String name) {
+        return teamRepo.save(new Team(name));
     }
 
     @Transactional

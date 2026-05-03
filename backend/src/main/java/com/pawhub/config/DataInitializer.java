@@ -35,7 +35,6 @@ public class DataInitializer implements CommandLineRunner {
     private static final Logger log = LoggerFactory.getLogger(DataInitializer.class);
     private final Random rng = new Random(42);
 
-    private final OrganizationRepository orgRepo;
     private final TeamRepository teamRepo;
     private final ProjectRepository projectRepo;
     private final UserRepository userRepo;
@@ -47,13 +46,12 @@ public class DataInitializer implements CommandLineRunner {
     private final FlakyTestRecordRepository flakyRepo;
     private final FailureClusterRepository clusterRepo;
 
-    public DataInitializer(OrganizationRepository orgRepo, TeamRepository teamRepo,
+    public DataInitializer(TeamRepository teamRepo,
                            ProjectRepository projectRepo, UserRepository userRepo,
                            MembershipRepository membershipRepo, PasswordEncoder passwordEncoder,
                            TestRunRepository testRunRepo, TestExecutionRepository executionRepo,
                            TrendSnapshotRepository trendRepo, FlakyTestRecordRepository flakyRepo,
                            FailureClusterRepository clusterRepo) {
-        this.orgRepo = orgRepo;
         this.teamRepo = teamRepo;
         this.projectRepo = projectRepo;
         this.userRepo = userRepo;
@@ -75,9 +73,8 @@ public class DataInitializer implements CommandLineRunner {
         }
         log.info("Seeding demo data...");
 
-        // --- Auth: org, team, project, users ---
-        Organization org = orgRepo.save(new Organization("PawCorp"));
-        Team team = teamRepo.save(new Team("QA Team", org));
+        // --- Auth: team, project, users ---
+        Team team = teamRepo.save(new Team("QA Team"));
         Project project = projectRepo.save(new Project("mobile-app", team));
 
         User alice = userRepo.save(new User("alice", "alice@pawcorp.com", passwordEncoder.encode("pass123")));

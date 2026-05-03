@@ -25,6 +25,7 @@ export default function LoginPage() {
   const router = useRouter()
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
+  const [rememberMe, setRememberMe] = useState(true)
   const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -32,7 +33,7 @@ export default function LoginPage() {
     setLoading(true)
     try {
       const res = await api.auth.login(username, password)
-      setToken(res.token)
+      setToken(res.token, rememberMe)
       toast.success(`Welcome, ${res.username}`)
       router.push(`/projects/${getLastProjectId()}`)
     } catch (err) {
@@ -68,6 +69,18 @@ export default function LoginPage() {
                 value={password}
                 onChange={e => setPassword(e.target.value)}
               />
+            </div>
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="rememberMe"
+                checked={rememberMe}
+                onChange={e => setRememberMe(e.target.checked)}
+                className="h-4 w-4 rounded border-input accent-primary"
+              />
+              <Label htmlFor="rememberMe" className="font-normal cursor-pointer">
+                Remember me
+              </Label>
             </div>
             <Button type="submit" disabled={loading} className="w-full">
               {loading ? "Logging in..." : "Log In"}

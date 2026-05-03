@@ -109,7 +109,6 @@ export interface ProjectInfo {
   name: string;
   apiKey: string;
   teamName: string;
-  orgName: string;
 }
 
 export interface TeamMember {

@@ -74,16 +74,14 @@ export default function Navbar({
   return (
     <nav className="flex items-center justify-between px-6 py-3 border-b bg-card">
       <div className="flex items-center gap-4">
-        <Link href="/projects" className="text-lg font-bold text-primary">
+        <Link href={`/projects/${projectId || 1}`} className="text-lg font-bold text-primary">
           Paw-Hub
         </Link>
         {projectId && (
           <DropdownMenu>
-            <DropdownMenuTrigger>
-              <Button variant="ghost" className="gap-1 text-muted-foreground">
-                / {currentName || `Project #${projectId}`}
-                <ChevronDown className="h-4 w-4" />
-              </Button>
+            <DropdownMenuTrigger className="inline-flex items-center gap-1 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-accent hover:text-accent-foreground">
+              / {currentName || `Project #${projectId}`}
+              <ChevronDown className="h-4 w-4" />
             </DropdownMenuTrigger>
             <DropdownMenuContent>
               {projects.map(p => (

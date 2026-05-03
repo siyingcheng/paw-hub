@@ -24,28 +24,27 @@ export default function Sidebar({
   const base = `/projects/${projectId}`
 
   const allLinks: SidebarLink[] = [
-    { href: "", label: "Dashboard", icon: <LayoutDashboard className="h-4 w-4" /> },
-    { href: "/trends", label: "Trends", icon: <TrendingUp className="h-4 w-4" /> },
+    { href: "", label: "Dashboard", icon: <LayoutDashboard className="h-5 w-5" /> },
+    { href: "/trends", label: "Trends", icon: <TrendingUp className="h-5 w-5" /> },
   ]
 
   const adminLinks: SidebarLink[] = [
-    { href: "/settings", label: "Settings", icon: <Settings className="h-4 w-4" /> },
+    { href: "/settings", label: "Settings", icon: <Settings className="h-5 w-5" /> },
   ]
 
   const links: SidebarLink[] =
     role === "ADMIN" ? [...allLinks, ...adminLinks] : allLinks
 
   const navContent = (
-    <div className="flex flex-col h-full p-4">
-      <nav className="space-y-1 flex-1">
+    <div className="flex flex-col h-full p-5">
+      <nav className="space-y-1.5 flex-1">
         {links.map(link => {
           const active = pathname === base + link.href
           return (
             <Link key={link.href} href={base + link.href}>
               <Button
                 variant={active ? "secondary" : "ghost"}
-                size="sm"
-                className="w-full justify-start gap-2"
+                className="w-full justify-start gap-2.5"
               >
                 {link.icon}
                 {link.label}
@@ -80,10 +79,8 @@ export default function Sidebar({
       </aside>
       <div className="md:hidden fixed top-3 left-3 z-40">
         <Sheet side="left">
-          <SheetTrigger>
-            <Button variant="outline" size="icon">
-              <Menu className="h-5 w-5" />
-            </Button>
+          <SheetTrigger className="inline-flex items-center justify-center rounded-lg h-9 w-9 border border-input hover:bg-accent hover:text-accent-foreground">
+            <Menu className="h-5 w-5" />
           </SheetTrigger>
           <SheetContent className="w-56 p-0">
             {navContent}
