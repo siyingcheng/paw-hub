@@ -2,7 +2,7 @@ import { getToken, clearAuth } from './auth';
 import type {
   TestRun, TestExecution, TrendResponse, FlakyTest,
   FailureClusterItem, TriageResponse, TriageSummary, SummaryResponse,
-  MeResponse, RegressionResponse, TeamMember, ProjectInfo, AnalysisConfig,
+  MeResponse, RegressionResponse, TeamMember, ProjectInfo, ProjectListItem, AnalysisConfig,
 } from './types';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
@@ -38,6 +38,7 @@ export const api = {
       request<ProjectInfo>(`/projects/${projectId}`),
     getAnalysisConfig: (projectId: number) =>
       request<AnalysisConfig>(`/projects/${projectId}/analysis-config`),
+    list: () => request<ProjectListItem[]>("/projects"),
   },
 
   auth: {

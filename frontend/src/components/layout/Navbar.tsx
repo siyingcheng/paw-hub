@@ -55,7 +55,7 @@ export default function Navbar({
   return (
     <nav className="flex items-center justify-between px-6 py-3 border-b bg-card">
       <div className="flex items-center gap-4">
-        <Link href={`/projects/${projectId || 1}`} className="text-lg font-bold text-primary">
+        <Link href="/projects" className="text-lg font-bold text-primary">
           Paw-Hub
         </Link>
         {projectId && (
