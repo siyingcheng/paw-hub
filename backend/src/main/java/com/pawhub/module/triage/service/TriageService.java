@@ -25,7 +25,7 @@ public class TriageService {
 
     @Transactional
     public TriageResponse saveOrUpdate(Long executionId, TriageRequest request, Long userId) {
-        executionRepo.findById(executionId)
+        var exec = executionRepo.findById(executionId)
             .orElseThrow(() -> new PawHubException("Test execution not found", HttpStatus.NOT_FOUND));
         FailureTriage triage = triageRepo.findByTestExecutionId(executionId)
             .orElseGet(FailureTriage::new);

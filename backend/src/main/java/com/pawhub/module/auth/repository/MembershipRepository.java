@@ -21,4 +21,9 @@ public interface MembershipRepository extends JpaRepository<Membership, Long> {
 
     @Query("SELECT m FROM Membership m JOIN FETCH m.user WHERE m.user.id = :userId AND m.team.id = :teamId")
     Optional<Membership> findByUserIdAndTeamIdWithUser(@Param("userId") Long userId, @Param("teamId") Long teamId);
+
+    @Query("SELECT COUNT(m) > 0 FROM Membership m " +
+           "WHERE m.user.id = :userId AND m.team.id = " +
+           "(SELECT p.team.id FROM Project p WHERE p.id = :projectId)")
+    boolean existsByUserIdAndProjectTeamId(@Param("userId") Long userId, @Param("projectId") Long projectId);
 }
